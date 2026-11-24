@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   CATALOGO,
+  confirmaExclusao,
   descreverTarefa,
   faseAposGerminacao,
   formatarData,
@@ -79,5 +80,14 @@ describe('confirmação de germinação', () => {
     expect(faseAposGerminacao(tomate)?.nome).toBe('muda');
     const hortela = CATALOGO.find((e) => e.id === 'hortela')!;
     expect(faseAposGerminacao(hortela)).toBeNull();
+  });
+});
+
+describe('confirmação da exclusão de conta', () => {
+  it('só aceita a palavra EXCLUIR', () => {
+    expect(confirmaExclusao('EXCLUIR')).toBe(true);
+    expect(confirmaExclusao(' excluir ')).toBe(true);
+    expect(confirmaExclusao('excluir conta')).toBe(false);
+    expect(confirmaExclusao('')).toBe(false);
   });
 });

@@ -2,15 +2,9 @@ name: APK de teste
 
 # Gera um APK para instalar no celular e testar. Não é a versão da loja:
 # vai assinado com a chave de debug do modelo do Expo e não deve ser distribuído.
+# Só roda quando alguém pede (aba Actions > APK de teste > Run workflow): o APK sai
+# quando o app inteiro estiver validado, para não gastar 20 minutos de build a cada mudança.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    paths:
-      - 'apps/app/**'
-      - 'packages/core/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/apk-teste.yml'
   workflow_dispatch:
 
 permissions:

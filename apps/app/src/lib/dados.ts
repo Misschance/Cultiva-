@@ -395,3 +395,14 @@ function bytesAleatorios(n: number): Uint8Array {
   for (let i = 0; i < n; i++) b[i] = Math.floor(Math.random() * 256);
   return b;
 }
+
+/**
+ * Exclui a conta e todos os dados (LGPD). Quem apaga é a Edge Function "excluir-conta",
+ * que identifica o usuário pelo token da sessão; o app não manda id nenhum.
+ */
+export async function excluirConta(): Promise<void> {
+  const { error } = await supabase.functions.invoke('excluir-conta', { body: { confirmacao: 'EXCLUIR' } });
+  if (error) falhar('Não foi possível excluir a conta. Tente de novo em instantes.', error);
+  // A sessão já não vale no servidor; limpa a cópia local.
+  await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
+}
