@@ -72,6 +72,7 @@ function texto(valor: string | undefined): string {
 
 // --- leitura e validação -----------------------------------------------------
 
+const REGIOES = ['Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
 const plantas = ler('plantas.csv');
 const fases = ler('fases.csv');
 const epocas = ler('epocas_por_regiao.csv');
@@ -129,6 +130,23 @@ const catalogo = plantas.map((p) => {
     dicaAcessivel: texto(p.dica_acessivel),
     pontoColheita: pontoColheita(p, id),
     fases: fasesDaPlanta,
+    epocas: epocas
+      .filter((e) => e.planta_id === id)
+      .map((e) => {
+        const regiao = texto(e.regiao);
+        if (!REGIOES.includes(regiao)) throw new Error(`${id}: região desconhecida "${regiao}"`);
+        const mesInicio = inteiro(e.mes_inicio, `${id}.mes_inicio`);
+        const mesFim = inteiro(e.mes_fim, `${id}.mes_fim`);
+        for (const m of [mesInicio, mesFim]) if (m !== null && (m < 1 || m > 12)) throw new Error(`${id}: mês fora de 1 a 12`);
+        const rec = texto(e.recomendado);
+        return {
+          variedade: texto(e.variedade) || null,
+          regiao,
+          mesInicio,
+          mesFim,
+          recomendado: rec === 'sim' ? true : rec === 'não' ? false : null,
+        };
+      }),
   };
 });
 
