@@ -30,3 +30,23 @@ export function maisRecente(datas: DataISO[]): DataISO | null {
   if (datas.length === 0) return null;
   return datas.reduce((a, b) => (paraDia(b) > paraDia(a) ? b : a));
 }
+
+/** "2026-11-24" vira "24/11/2026". */
+export function formatarData(data: DataISO): string {
+  paraDia(data);
+  const [a, m, d] = data.split('-');
+  return `${d}/${m}/${a}`;
+}
+
+/** "24/11/2026" vira "2026-11-24"; devolve null se a data não existir. */
+export function lerDataBr(texto: string): DataISO | null {
+  const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(texto.trim());
+  if (!m) return null;
+  const iso = `${m[3]}-${m[2]!.padStart(2, '0')}-${m[1]!.padStart(2, '0')}`;
+  try {
+    paraDia(iso);
+    return iso;
+  } catch {
+    return null;
+  }
+}

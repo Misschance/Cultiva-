@@ -58,3 +58,11 @@ function ultimaConfirmacaoValida(plantio: Plantio, especie: Especie) {
   }
   return melhor;
 }
+
+/** Fase em que a planta entra quando o usuário confirma que germinou. */
+export function faseAposGerminacao(especie: Especie): FaseEspecie | null {
+  const fases = [...especie.fases].sort((a, b) => a.ordem - b.ordem);
+  const i = fases.findIndex((f) => f.nome === 'germinação');
+  if (i < 0) return null;
+  return fases[i + 1] ?? null;
+}

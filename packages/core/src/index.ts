@@ -5,4 +5,7 @@ export * from './rega';
 export * from './previsao';
 export * from './clima';
 export * from './agenda';
+export * from './hoje';
+export * from './geocodificacao';
+export * from './textos';
 export { CATALOGO, REFERENCIAS } from './catalogo.gerado';
