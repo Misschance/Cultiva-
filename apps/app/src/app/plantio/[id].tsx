@@ -12,7 +12,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
-import { Aviso, Botao, Campo, Cartao, Opcoes, Paragrafo, Subtitulo, Tela, Titulo, Texto, useCores, Selo, BarraProgresso } from '../../components/ui';
+import { Aviso, BarraProgresso, Botao, Campo, Cartao, Dado, Fato, Opcoes, Paragrafo, Secao, Selo, Subtitulo, Tela, Texto, Titulo, useCores } from '../../components/ui';
 import { confirmarFase, encerrarPlantio, novaColheita, registrarAcao, registrarColheita } from '../../lib/dados';
 import { ESPECIES, useHorta } from '../../lib/horta';
 import { NOME_ORIGEM } from '../../lib/rotulos';
@@ -100,63 +100,63 @@ export default function DetalhePlantio() {
         </View>
       )}
       <Paragrafo suave>
-        {especie.nomePopular} · {NOME_ORIGEM[plantio.origem]} · {local.nome} · plantada em {formatarData(plantio.dataPlantio)}
+        {local.nome} · {NOME_ORIGEM[plantio.origem]} · plantada em {formatarData(plantio.dataPlantio)}
         {plantio.quantidade > 1 ? ` · ${plantio.quantidade} pés` : ''}
       </Paragrafo>
       {erro && <Aviso tipo="erro">{erro}</Aviso>}
 
-      <Cartao>
-        <Texto style={{ fontSize: 13, color: cores.textoSuave }}>Fase atual</Texto>
-        <Texto style={{ fontSize: 18, fontWeight: '600', color: cores.texto }}>{fase.nome}</Texto>
-        {fase.rega ? <Paragrafo>Rega: {fase.rega}</Paragrafo> : null}
-        {fase.adubacao ? <Paragrafo>Adubação: {fase.adubacao}</Paragrafo> : null}
-        {fase.intervencoes ? <Paragrafo>Cuidados: {fase.intervencoes}</Paragrafo> : null}
-      </Cartao>
-
-      <Cartao>
-        <Texto style={{ fontSize: 13, color: cores.textoSuave }}>Próxima rega</Texto>
-        <Texto style={{ fontSize: 18, fontWeight: '600', color: rega.atrasada ? cores.erro : cores.texto }}>
-          {rega.devidaEm === hoje ? 'Hoje' : formatarData(rega.devidaEm)}
-          {rega.atrasada ? ' (atrasada)' : ''}
-        </Texto>
-        {rega.ajustes.map((a) => (
-          <Paragrafo key={a} suave>
-            {a}
-          </Paragrafo>
-        ))}
-        <Paragrafo suave>Antes de regar, enfie o dedo 2 cm na terra: se estiver úmida, pode esperar.</Paragrafo>
-        <Botao
-          titulo={ultimaRega === hoje ? 'Já reguei hoje' : 'Reguei hoje'}
-          desativado={ultimaRega === hoje}
-          carregando={ocupado === 'rega'}
-          onPress={() => agir('rega', () => registrarAcao(plantio.id, 'rega', hoje))}
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        <Fato
+          rotulo="Próxima rega"
+          valor={rega.atrasada ? 'Atrasada' : rega.devidaEm === hoje ? 'Hoje' : formatarData(rega.devidaEm)}
+          detalhe={rega.atrasada ? `desde ${formatarData(rega.devidaEm)}` : undefined}
+          alerta={rega.atrasada}
         />
-      </Cartao>
+        <Fato
+          rotulo={colheita ? 'Colheita' : 'Germinação'}
+          valor={colheita ? formatarData(colheita.inicio) : germ ? formatarData(germ.inicio) : '—'}
+          detalhe={colheita ? `até ${formatarData(colheita.fim)}` : germ ? `até ${formatarData(germ.fim)}` : undefined}
+        />
+      </View>
 
-      {(germ || colheita) && (
+      {rega.ajustes.map((a) => (
+        <Paragrafo key={a} suave>
+          {a}
+        </Paragrafo>
+      ))}
+      <Botao
+        titulo={ultimaRega === hoje ? 'Já reguei hoje' : 'Reguei hoje'}
+        desativado={ultimaRega === hoje}
+        carregando={ocupado === 'rega'}
+        onPress={() => agir('rega', () => registrarAcao(plantio.id, 'rega', hoje))}
+      />
+      {precisaConfirmar && (
         <Cartao>
-          {germ && (
-            <Paragrafo>
-              Germinação esperada: {formatarData(germ.inicio)} a {formatarData(germ.fim)}
-              {germinacaoConfirmada(plantio, especie) ? ' (confirmada)' : ''}
-            </Paragrafo>
-          )}
-          {colheita && (
-            <Paragrafo>
-              Colheita começa entre {formatarData(colheita.inicio)} e {formatarData(colheita.fim)}
-            </Paragrafo>
-          )}
-          {colheita && especie.pontoColheita && <Paragrafo suave>Ponto de colheita: {especie.pontoColheita.texto}</Paragrafo>}
-          {precisaConfirmar && (
-            <Botao
-              titulo="Germinou"
-              variante="secundario"
-              carregando={ocupado === 'germinou'}
-              onPress={() => agir('germinou', () => confirmarFase(plantio.id, proximaFase.nome, hoje))}
-            />
-          )}
+          <Paragrafo>
+            Germinação esperada entre {formatarData(germ.inicio)} e {formatarData(germ.fim)}. Já nasceu?
+          </Paragrafo>
+          <Botao
+            titulo="Germinou"
+            variante="secundario"
+            carregando={ocupado === 'germinou'}
+            onPress={() => agir('germinou', () => confirmarFase(plantio.id, proximaFase.nome, hoje))}
+          />
         </Cartao>
       )}
+
+      <Subtitulo>Cuidados agora</Subtitulo>
+      <Secao titulo={`Fase: ${fase.nome.charAt(0).toUpperCase()}${fase.nome.slice(1)}`} resumo={fase.rega ?? undefined} inicialAberta>
+        <Dado titulo="Rega" texto={fase.rega} />
+        <Dado titulo="Adubação" texto={fase.adubacao} />
+        <Dado titulo="Cuidados" texto={fase.intervencoes} confianca={fase.confianca} />
+        <Paragrafo suave>Antes de regar, enfie o dedo 2 cm na terra: se estiver úmida, pode esperar.</Paragrafo>
+      </Secao>
+      {colheita && especie.pontoColheita && (
+        <Secao titulo="Ponto de colheita" resumo={especie.pontoColheita.texto}>
+          <Dado titulo="Quando colher" texto={especie.pontoColheita.texto} confianca={especie.pontoColheita.confianca} />
+        </Secao>
+      )}
+      <Botao titulo="Ver ficha completa da espécie" variante="secundario" onPress={() => router.push({ pathname: '/planta/[id]', params: { id: especie.id } })} />
 
       <Subtitulo>Registrar</Subtitulo>
       <View style={{ gap: 8 }}>
@@ -199,19 +199,20 @@ export default function DetalhePlantio() {
         <Botao titulo="Diário e fotos" onPress={() => router.push({ pathname: '/diario/[id]', params: { id: plantio.id } })} />
       </View>
 
-      <Subtitulo>Histórico</Subtitulo>
-      {historico.length === 0 ? (
-        <Paragrafo suave>Nada registrado ainda.</Paragrafo>
-      ) : (
-        historico.slice(0, 30).map((r, i) => (
-          <Paragrafo key={`${r.data}-${r.tipo}-${i}`}>
-            {formatarData(r.data)} · {NOME_ACAO[r.tipo] ?? r.tipo}
-          </Paragrafo>
-        ))
-      )}
+      <Secao titulo="Histórico" resumo={historico.length ? `${historico.length} registros` : 'Nada registrado ainda'}>
+        {historico.length === 0 ? (
+          <Paragrafo suave>Nada registrado ainda.</Paragrafo>
+        ) : (
+          historico.slice(0, 30).map((r, i) => (
+            <View key={`${r.data}-${r.tipo}-${i}`} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Texto style={{ fontSize: 15 }}>{NOME_ACAO[r.tipo] ?? r.tipo}</Texto>
+              <Texto style={{ fontSize: 15, color: cores.textoSuave }}>{formatarData(r.data)}</Texto>
+            </View>
+          ))
+        )}
+      </Secao>
 
-      <Subtitulo>Encerrar</Subtitulo>
-      <View style={{ gap: 8 }}>
+      <Secao titulo="Encerrar este plantio">
         <Botao
           titulo="Terminei de colher"
           variante="secundario"
@@ -224,7 +225,7 @@ export default function DetalhePlantio() {
           carregando={ocupado === 'perdido'}
           onPress={() => agir('perdido', () => encerrarPlantio(plantio.id, 'perdido'), () => router.replace('/horta'))}
         />
-      </View>
+      </Secao>
     </Tela>
   );
 }

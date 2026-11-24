@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -251,6 +251,69 @@ export function Carregando() {
   return (
     <View style={e.centro}>
       <ActivityIndicator color={c.verde} />
+    </View>
+  );
+}
+
+/** Bloco de resumo: um rótulo pequeno e um valor em destaque. */
+export function Fato({ rotulo, valor, detalhe, alerta }: { rotulo: string; valor: string; detalhe?: string; alerta?: boolean }) {
+  const c = useCores();
+  return (
+    <View style={{ flexGrow: 1, flexBasis: '45%', minWidth: 140, gap: 2, padding: 12, borderRadius: 16, backgroundColor: alerta ? c.fundoAlerta : c.superficie }}>
+      <Text style={{ fontSize: 12, fontFamily: fontes.medio, color: alerta ? c.alerta : c.textoSuave }}>{rotulo}</Text>
+      <Text style={{ fontSize: 19, fontFamily: fontes.titulo, color: alerta ? c.alerta : c.texto }}>{valor}</Text>
+      {detalhe ? <Text style={{ fontSize: 13, fontFamily: fontes.texto, color: alerta ? c.alerta : c.textoSuave }}>{detalhe}</Text> : null}
+    </View>
+  );
+}
+
+/** Cartão com título que abre e fecha, para esconder detalhes longos. */
+export function Secao({ titulo, resumo, inicialAberta = false, children }: { titulo: string; resumo?: string; inicialAberta?: boolean; children: ReactNode }) {
+  const c = useCores();
+  const e = useEstilos();
+  const [aberta, setAberta] = useState(inicialAberta);
+  return (
+    <View style={[e.cartao, { padding: 0, gap: 0, overflow: 'hidden' }]}>
+      <Pressable
+        onPress={() => setAberta((a) => !a)}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: aberta }}
+        accessibilityLabel={titulo}
+        style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, minHeight: 56, opacity: pressed ? 0.7 : 1 })}
+      >
+        <View style={{ flex: 1, gap: 2 }}>
+          <Text style={{ fontSize: 16, fontFamily: fontes.forte, color: c.texto }}>{titulo}</Text>
+          {resumo && !aberta ? (
+            <Text style={{ fontSize: 13, fontFamily: fontes.texto, color: c.textoSuave }} numberOfLines={1}>
+              {resumo}
+            </Text>
+          ) : null}
+        </View>
+        <Text style={{ fontSize: 18, color: c.textoSuave, transform: [{ rotate: aberta ? '180deg' : '0deg' }] }}>⌄</Text>
+      </Pressable>
+      {aberta ? <View style={{ paddingHorizontal: 16, paddingBottom: 16, gap: 12 }}>{children}</View> : null}
+    </View>
+  );
+}
+
+const NIVEL_CONFIANCA: Record<string, string> = { A: 'Fonte conferida', B: 'Fonte técnica', C: 'Prática, sem fonte técnica' };
+
+/** Um dado da ficha: rótulo, texto e, se houver, o nível de confiança da fonte. */
+export function Dado({ titulo, texto, confianca }: { titulo: string; texto: unknown; confianca?: unknown }) {
+  const c = useCores();
+  if (texto === null || texto === undefined || texto === '') return null;
+  const nivel = typeof confianca === 'string' && NIVEL_CONFIANCA[confianca] ? confianca : null;
+  return (
+    <View style={{ gap: 4 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        <Text style={{ fontSize: 13, fontFamily: fontes.forte, color: c.textoSuave, letterSpacing: 0.4, textTransform: 'uppercase' }}>{titulo}</Text>
+        {nivel && (
+          <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, backgroundColor: nivel === 'C' ? c.fundoAlerta : c.verdeClaro }}>
+            <Text style={{ fontSize: 11, fontFamily: fontes.medio, color: nivel === 'C' ? c.alerta : c.verdeEscuro }}>{NIVEL_CONFIANCA[nivel]}</Text>
+          </View>
+        )}
+      </View>
+      <Texto style={{ fontSize: 16, lineHeight: 23 }}>{String(texto)}</Texto>
     </View>
   );
 }
