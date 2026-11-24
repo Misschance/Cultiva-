@@ -1,0 +1,8 @@
+codigo,significado
+A,A - lido na fonte original
+B,B - fonte Embrapa lida por resumo; conferir página
+C,C - não verificado; precisa de fonte
+luz_horas_min,R3 p.23 indica cerca de 5 h de sol direto como mínimo geral da horta
+dias,Contados a partir da data de semeadura ou plantio da muda
+fase colheita,"dia_inicio e dia_fim indicam a janela em que a colheita começa, não o fim da produção"
+mes_inicio/mes_fim,1=jan ... 12=dez; mes_fim menor que mes_inicio cruza o ano
