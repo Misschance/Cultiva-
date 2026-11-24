@@ -1,0 +1,9 @@
+codigo,significado
+A,Lido na fonte original
+C,Sem fonte verificada
+vazio,Sem dado na literatura lida; o app deve esconder o campo
+luz_categoria,sol_direto | indireta_forte | meia_sombra | pouca_luz
+estacao,"crescimento = set a mar; repouso = abr a ago (inverno de jun a ago). No Norte e Nordeste, sem inverno marcado, usar crescimento o ano todo (C)."
+verificar_terra_dias,"Intervalo para o app lembrar de CONFERIR a terra, não de regar. A regra de rega diz quando regar."
+toxica_caes/gatos,sim | não | vazio (sem dado)
+fontes,Fichas de extensão dos EUA (clima temperado e subtropical): conferir com literatura brasileira quando houver

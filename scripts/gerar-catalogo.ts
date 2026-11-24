@@ -77,6 +77,9 @@ const plantas = ler('plantas.csv');
 const fases = ler('fases.csv');
 const epocas = ler('epocas_por_regiao.csv');
 const referencias = ler('referencias.csv');
+const ornamentais = ler('ornamentais.csv');
+const manutencao = ler('manutencao_ornamentais.csv');
+const referenciasV2 = ler('referencias_v2.csv');
 
 const ids = new Set<string>();
 for (const p of plantas) {
@@ -150,15 +153,110 @@ const catalogo = plantas.map((p) => {
   };
 });
 
+// --- Plantas de casa (ornamentais, base v2) ----------------------------------
+
+const LUZES = ['sol_direto', 'indireta_forte', 'meia_sombra', 'pouca_luz'];
+const ESTACOES = ['crescimento', 'repouso'];
+const idsOrn = new Set<string>();
+
+/** "sim", "não" ou vazio; o que vier depois (ex.: "não (echevéria)") vira observação. */
+function toxica(valor: string | undefined, campo: string) {
+  const v = texto(valor).trim();
+  if (!v) return null;
+  const m = /^(sim|não)\b\s*(.*)$/i.exec(v);
+  if (!m) throw new Error(`${campo}: esperado sim, não ou vazio, veio "${v}"`);
+  const nota = m[2]!.replace(/^\(|\)$/g, '').trim();
+  return { toxica: m[1]!.toLowerCase() === 'sim', nota: nota || null };
+}
+
+const vazioNulo = (v: string | undefined) => texto(v).trim() || null;
+const semDado = (v: string | undefined) => {
+  const t = vazioNulo(v);
+  return t && !/^sem dado\.?$/i.test(t) ? t : null;
+};
+
+const plantasDeCasa = ornamentais.map((o) => {
+  const id = o.id ?? '';
+  if (!/^[a-z0-9_]{1,40}$/.test(id)) throw new Error(`id de planta de casa inválido: "${id}"`);
+  if (ids.has(id) || idsOrn.has(id)) throw new Error(`id repetido: ${id}`);
+  idsOrn.add(id);
+  const luz = texto(o.luz_categoria);
+  if (!LUZES.includes(luz)) throw new Error(`${id}: luz_categoria desconhecida "${luz}"`);
+  const estacoes = manutencao
+    .filter((m) => m.planta_id === id)
+    .map((m) => {
+      const estacao = texto(m.estacao);
+      if (!ESTACOES.includes(estacao)) throw new Error(`${id}: estação desconhecida "${estacao}"`);
+      return {
+        estacao,
+        meses: texto(m.meses),
+        rega: semDado(m.rega_regra),
+        verificarTerraDias: inteiro(m.verificar_terra_dias, `${id}.verificar_terra_dias`),
+        verificarConfianca: confianca(m.verificar_confianca),
+        verificarFonte: vazioNulo(m.verificar_fonte),
+        adubacao: semDado(m.adubacao),
+        adubacaoFonte: vazioNulo(m.adubacao_fonte),
+      };
+    });
+  if (estacoes.length !== 2) throw new Error(`${id}: precisa de uma linha de crescimento e uma de repouso`);
+  return {
+    id,
+    nomePopular: texto(o.nome_popular),
+    outrosNomes: vazioNulo(o.outros_nomes),
+    nomeCientifico: texto(o.nome_cientifico),
+    tipo: texto(o.tipo),
+    luz: {
+      categoria: luz,
+      texto: semDado(o.luz_texto),
+      horasSolDireto: vazioNulo(o.luz_horas_sol_direto),
+      fonte: vazioNulo(o.luz_fonte),
+      confianca: confianca(o.luz_confianca),
+    },
+    rega: {
+      regra: semDado(o.rega_regra),
+      umidadeSolo: vazioNulo(o.umidade_solo_preferida),
+      fonte: vazioNulo(o.rega_fonte),
+      confianca: confianca(o.rega_confianca),
+    },
+    substrato: { texto: semDado(o.substrato), vaso: semDado(o.vaso), fonte: vazioNulo(o.substrato_fonte) },
+    adubo: { texto: semDado(o.adubo), fonte: vazioNulo(o.adubo_fonte), confianca: confianca(o.adubo_confianca) },
+    temperatura: {
+      ideal: semDado(o.temperatura_ideal_c),
+      minimaC: numero(o.temperatura_minima_c, `${id}.temperatura_minima_c`),
+      fonte: vazioNulo(o.temperatura_fonte),
+    },
+    umidadeAr: semDado(o.umidade_ar),
+    propagacao: semDado(o.propagacao),
+    crescimento: semDado(o.crescimento),
+    toxicidade: {
+      caes: toxica(o.toxica_caes, `${id}.toxica_caes`),
+      gatos: toxica(o.toxica_gatos, `${id}.toxica_gatos`),
+      gravidadeHumanos: semDado(o.toxicidade_humanos_gravidade),
+      sintomas: semDado(o.toxicidade_sintomas),
+      fonte: vazioNulo(o.toxicidade_fonte),
+      confianca: confianca(o.toxicidade_confianca),
+    },
+    problemas: semDado(o.problemas_comuns),
+    dica: semDado(o.dica_acessivel),
+    estacoes,
+  };
+});
+for (const m of manutencao) {
+  if (!idsOrn.has(m.planta_id ?? '')) throw new Error(`manutenção sem planta de casa: "${m.planta_id}"`);
+}
+
 // --- TypeScript --------------------------------------------------------------
 
 const ts = `// Arquivo gerado por scripts/gerar-catalogo.ts a partir de data/base-plantas/. Não edite à mão.
-import type { Especie } from './tipos';
+import type { Especie, PlantaDeCasa } from './tipos';
 
 export const CATALOGO: readonly Especie[] = ${JSON.stringify(catalogo, null, 2)};
 
+/** Plantas de casa (ornamentais, base v2): sem colheita nem época por região. */
+export const PLANTAS_DE_CASA: readonly PlantaDeCasa[] = ${JSON.stringify(plantasDeCasa, null, 2)};
+
 export const REFERENCIAS: readonly { id: string; citacao: string; url: string }[] = ${JSON.stringify(
-  referencias.map((r) => ({ id: texto(r.ref_id), citacao: texto(r.citacao), url: texto(r.url) })),
+  [...referencias, ...referenciasV2].map((r) => ({ id: texto(r.ref_id), citacao: texto(r.citacao), url: texto(r.url) })),
   null,
   2,
 )};
@@ -296,5 +394,5 @@ if (process.argv.includes('--verificar')) {
 } else {
   writeFileSync(SAIDA_TS, ts);
   writeFileSync(SAIDA_SQL, seed);
-  console.log(`Catálogo gerado: ${catalogo.length} espécies, ${fases.length} fases, ${epocas.length} épocas.`);
+  console.log(`Catálogo gerado: ${catalogo.length} espécies, ${plantasDeCasa.length} plantas de casa, ${fases.length} fases, ${epocas.length} épocas.`);
 }

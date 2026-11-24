@@ -118,3 +118,56 @@ export interface Tarefa {
   /** Frases curtas que explicam ao usuário por que a data mudou. */
   ajustes: string[];
 }
+
+export type LuzCasa = 'sol_direto' | 'indireta_forte' | 'meia_sombra' | 'pouca_luz';
+
+export interface ToxicidadePet {
+  toxica: boolean;
+  /** Ressalva da fonte, ex.: "echevéria" quando vale só para um gênero. */
+  nota: string | null;
+}
+
+export interface EstacaoCasa {
+  estacao: 'crescimento' | 'repouso';
+  /** "set-mar" ou "abr-ago". */
+  meses: string;
+  rega: string | null;
+  /**
+   * Dias para o app lembrar de CONFERIR a terra (não de regar). Só confiança A
+   * pode aparecer como recomendação; C serve apenas para o lembrete de "toque na terra".
+   */
+  verificarTerraDias: number | null;
+  verificarConfianca: Confianca | null;
+  verificarFonte: string | null;
+  adubacao: string | null;
+  adubacaoFonte: string | null;
+}
+
+/** Planta de casa (ornamental): campos vazios na base ficam null e o app os esconde. */
+export interface PlantaDeCasa {
+  id: string;
+  nomePopular: string;
+  outrosNomes: string | null;
+  nomeCientifico: string;
+  tipo: string;
+  luz: { categoria: LuzCasa; texto: string | null; horasSolDireto: string | null; fonte: string | null; confianca: Confianca | null };
+  rega: { regra: string | null; umidadeSolo: string | null; fonte: string | null; confianca: Confianca | null };
+  substrato: { texto: string | null; vaso: string | null; fonte: string | null };
+  adubo: { texto: string | null; fonte: string | null; confianca: Confianca | null };
+  temperatura: { ideal: string | null; minimaC: number | null; fonte: string | null };
+  umidadeAr: string | null;
+  propagacao: string | null;
+  crescimento: string | null;
+  toxicidade: {
+    /** null: sem dado na fonte, nunca "não tóxica". */
+    caes: ToxicidadePet | null;
+    gatos: ToxicidadePet | null;
+    gravidadeHumanos: string | null;
+    sintomas: string | null;
+    fonte: string | null;
+    confianca: Confianca | null;
+  };
+  problemas: string | null;
+  dica: string | null;
+  estacoes: EstacaoCasa[];
+}
