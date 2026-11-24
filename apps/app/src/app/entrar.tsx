@@ -15,7 +15,7 @@ export default function Entrar() {
   const [mensagem, setMensagem] = useState<{ tipo: 'erro' | 'aviso'; texto: string } | null>(null);
   const [enviando, setEnviando] = useState(false);
 
-  if (sessao) return <Redirect href="/" />;
+  if (sessao) return <Redirect href="/(abas)" />;
 
   async function enviar() {
     setMensagem(null);
