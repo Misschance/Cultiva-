@@ -192,6 +192,19 @@ describe('tarefas do dia', () => {
     expect(resumo).not.toContain('alface:rega');
   });
 
+  it('tira o aviso de colheita depois que a pessoa registra que colheu', () => {
+    const alface: Plantio = { id: 'alface', especieId: 'alface', localId: 'l1', origem: 'muda', dataPlantio: '2026-09-30' };
+    const colheitas = (registros: { plantioId: string; tipo: 'rega' | 'colheita'; data: string }[]) =>
+      tarefasDoDia({ plantios: [alface], especies, locais, registros, hoje: '2026-12-01' })
+        .filter((t) => t.tipo === 'colheita' || t.tipo === 'colheita-proxima')
+        .map((t) => t.tipo);
+    const regada = { plantioId: 'alface', tipo: 'rega' as const, data: '2026-12-01' };
+    expect(colheitas([regada])).toEqual(['colheita']);
+    expect(colheitas([regada, { plantioId: 'alface', tipo: 'colheita', data: '2026-12-01' }])).toEqual([]);
+    // Colheita registrada muito antes da janela não conta.
+    expect(colheitas([regada, { plantioId: 'alface', tipo: 'colheita', data: '2026-10-15' }])).toEqual(['colheita']);
+  });
+
   it('avisa germinação atrasada e não promete colheita de semente que não nasceu', () => {
     const tarefas = tarefasDoDia({
       plantios: [{ id: 'r', especieId: 'rabanete', localId: 'l1', origem: 'semente', dataPlantio: '2026-11-01' }],

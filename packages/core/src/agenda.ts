@@ -57,7 +57,17 @@ export function tarefasDoDia(e: EntradaAgenda): Tarefa[] {
 
     // Se a janela de germinação passou sem confirmação, não há colheita a anunciar.
     const colheita = colheitaIncerta(plantio, especie, e.hoje) ? null : janelaColheita(plantio, especie);
-    if (colheita) {
+    // Depois que a pessoa registra a primeira colheita da janela, o aviso já cumpriu o papel.
+    const jaColheu =
+      colheita !== null &&
+      e.registros.some(
+        (r) =>
+          r.plantioId === plantio.id &&
+          r.tipo === 'colheita' &&
+          paraDia(r.data) >= paraDia(colheita.inicio) - AVISO_COLHEITA_DIAS &&
+          paraDia(r.data) <= hoje,
+      );
+    if (colheita && !jaColheu) {
       const inicio = paraDia(colheita.inicio);
       if (hoje >= inicio && hoje <= paraDia(colheita.fim)) {
         tarefas.push({ plantioId: plantio.id, tipo: 'colheita', devidaEm: colheita.inicio, atrasada: false, ajustes: [] });
