@@ -5,16 +5,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { Texto, useCores } from './ui';
 
-export type Icone = 'sol' | 'horta' | 'livro' | 'pessoa';
+export type Icone = 'sol' | 'horta' | 'calendario' | 'livro' | 'pessoa';
 
 const TRACOS: Record<Icone, string> = {
   sol: 'M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
   horta: 'M12 21v-9M12 12c0-4 3-6 7-6 0 4-3 6-7 6zM12 15c0-3-2.2-5-6-5 0 3 2.2 5 6 5zM4 21h16',
+  calendario: 'M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM4 10h16M8 2v4M16 2v4M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01',
   livro: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 19V5M9 7h6',
   pessoa: 'M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6',
 };
 
-const ICONE_DA_ROTA: Record<string, Icone> = { index: 'sol', horta: 'horta', plantas: 'livro', conta: 'pessoa' };
+const ICONE_DA_ROTA: Record<string, Icone> = { index: 'sol', horta: 'horta', calendario: 'calendario', plantas: 'livro', conta: 'pessoa' };
 
 function Desenho({ nome, cor, tamanho = 22 }: { nome: Icone; cor: string; tamanho?: number }) {
   return (
@@ -30,7 +31,7 @@ function Desenho({ nome, cor, tamanho = 22 }: { nome: Icone; cor: string; tamanh
 const RECORTE = 36;
 const BOLHA = 27;
 const BARRA = 66;
-const ITEM_LATERAL = 92;
+const ITEM_LATERAL = 84;
 
 function useMenosMovimento() {
   const [menos, setMenos] = useState(false);
