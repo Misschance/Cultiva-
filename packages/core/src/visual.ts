@@ -51,3 +51,30 @@ export function estaComSede(tarefas: readonly Tarefa[], plantioId: string): bool
 export function plantadaNoChao(tipo: TipoLocal): boolean {
   return tipo === 'canteiro' || tipo === 'quintal' || tipo === 'estufa';
 }
+
+export type MomentoDoDia = 'amanhecer' | 'dia' | 'entardecer' | 'noite';
+
+export interface Ceu {
+  astro: 'sol' | 'lua';
+  momento: MomentoDoDia;
+  /** 0 quando o astro nasce (à esquerda), 1 quando se põe (à direita). */
+  progresso: number;
+}
+
+const NASCER = 6 * 60;
+const POR = 18 * 60;
+const MEIO_DIA_INTEIRO = 24 * 60;
+
+/**
+ * Sol ou lua na cena da planta, pela hora local do aparelho. É enfeite, não dado de cultivo:
+ * usa um dia fixo das 6h às 18h, sem calcular o nascer do sol real de cada cidade.
+ */
+export function ceuDoMomento(minutosDoDia: number): Ceu {
+  const m = ((Math.floor(minutosDoDia) % MEIO_DIA_INTEIRO) + MEIO_DIA_INTEIRO) % MEIO_DIA_INTEIRO;
+  const meio = POR - NASCER;
+  if (m >= NASCER && m < POR) {
+    const momento: MomentoDoDia = m < NASCER + 60 ? 'amanhecer' : m >= POR - 60 ? 'entardecer' : 'dia';
+    return { astro: 'sol', momento, progresso: (m - NASCER) / meio };
+  }
+  return { astro: 'lua', momento: 'noite', progresso: ((m - POR + MEIO_DIA_INTEIRO) % MEIO_DIA_INTEIRO) / (MEIO_DIA_INTEIRO - meio) };
+}

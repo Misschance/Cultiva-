@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CATALOGO, estaComSede, estadoVisual, plantadaNoChao, progressoAteColheita, type Especie, type Plantio, type Tarefa } from '../src';
+import { CATALOGO, ceuDoMomento, estaComSede, estadoVisual, plantadaNoChao, progressoAteColheita, type Especie, type Plantio, type Tarefa } from '../src';
 
 const especie = (id: string): Especie => {
   const e = CATALOGO.find((x) => x.id === id);
@@ -56,5 +56,26 @@ describe('planta animada', () => {
     expect(plantadaNoChao('quintal')).toBe(true);
     expect(plantadaNoChao('vaso')).toBe(false);
     expect(plantadaNoChao('jardineira')).toBe(false);
+  });
+});
+
+describe('céu da cena', () => {
+  const h = (hora: number, min = 0) => hora * 60 + min;
+
+  it('mostra o sol de dia, nascendo à esquerda e se pondo à direita', () => {
+    expect(ceuDoMomento(h(6))).toEqual({ astro: 'sol', momento: 'amanhecer', progresso: 0 });
+    expect(ceuDoMomento(h(12))).toEqual({ astro: 'sol', momento: 'dia', progresso: 0.5 });
+    expect(ceuDoMomento(h(17, 30)).momento).toBe('entardecer');
+  });
+
+  it('mostra a lua à noite, atravessando a madrugada', () => {
+    expect(ceuDoMomento(h(18))).toEqual({ astro: 'lua', momento: 'noite', progresso: 0 });
+    expect(ceuDoMomento(h(0)).progresso).toBe(0.5);
+    expect(ceuDoMomento(h(5, 59)).astro).toBe('lua');
+  });
+
+  it('aceita minutos fora do intervalo de um dia', () => {
+    expect(ceuDoMomento(h(36))).toEqual(ceuDoMomento(h(12)));
+    expect(ceuDoMomento(-60)).toEqual(ceuDoMomento(h(23)));
   });
 });

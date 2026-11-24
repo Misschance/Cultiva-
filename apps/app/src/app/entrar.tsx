@@ -63,7 +63,7 @@ export default function Entrar() {
   return (
     <View style={estilos.tela}>
       <View style={{ alignItems: 'center' }}>
-        <PlantaViva especieId="alface" nome="Alface" estagio="colheita" tamanho={150} />
+        <PlantaViva especieId="alface" nome="Alface" estagio="colheita" tamanho={150} ceu={false} />
       </View>
       <Texto style={estilos.titulo} accessibilityRole="header">
         {modo === 'entrar' ? 'Entre na sua horta' : 'Crie sua conta'}

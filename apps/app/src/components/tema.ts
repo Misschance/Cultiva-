@@ -18,6 +18,12 @@ export const CLARO = {
   alerta: '#6B4A00',
   fundoAlerta: '#F6EBD3',
   barraAlerta: '#C9A24B',
+  // Barra de abas: doca escura com destaque lima na aba ativa.
+  doca: '#1D261E',
+  docaTexto: '#AEB8AA',
+  docaAtivo: '#FFFFFF',
+  destaque: '#C6E86B',
+  sobreDestaque: '#18210F',
 };
 
 /** Paleta escura: mesmas funções, contraste AA sobre fundo de folha à noite. */
@@ -38,6 +44,11 @@ export const ESCURO: typeof CLARO = {
   alerta: '#F0C878',
   fundoAlerta: '#3D3220',
   barraAlerta: '#E0B060',
+  doca: '#263027',
+  docaTexto: '#A3AC9F',
+  docaAtivo: '#EEF1EA',
+  destaque: '#C6E86B',
+  sobreDestaque: '#18210F',
 };
 
 export type Cores = typeof CLARO;

@@ -1,4 +1,4 @@
-import type { EstagioVisual } from '@cultivae/core';
+import { ceuDoMomento, type Ceu, type EstagioVisual } from '@cultivae/core';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { AccessibilityInfo, Animated, Easing, Platform, View } from 'react-native';
 import Svg, { Circle, Ellipse, G, Path, Rect } from 'react-native-svg';
@@ -8,6 +8,7 @@ import { useEscuro } from './tema';
  * Planta desenhada em vetor para cada espécie do catálogo, com quatro estágios
  * (broto, folhas, crescendo, colheita), no vaso ou na terra do canteiro.
  * Com rega atrasada, as folhas amarelam, pendem e o balanço para.
+ * Atrás dela, o sol ou a lua no lugar do céu conforme a hora do aparelho.
  * Respeita a preferência de "reduzir movimento" do sistema.
  */
 
@@ -277,6 +278,101 @@ function useMenosMovimento(): boolean {
   return menos;
 }
 
+
+/** Minutos desde a meia-noite no relógio do aparelho, atualizados a cada minuto. */
+function useMinutosAgora(): number {
+  const agora = () => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  };
+  const [min, setMin] = useState(agora);
+  useEffect(() => {
+    const id = setInterval(() => setMin(agora()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+  return min;
+}
+
+/** Brilho de 4 pontas para as estrelas. */
+const brilho = (x: number, y: number, r: number) =>
+  `M${x} ${y - r} Q${x} ${y} ${x + r} ${y} Q${x} ${y} ${x} ${y + r} Q${x} ${y} ${x - r} ${y} Q${x} ${y} ${x} ${y - r} Z`;
+
+function Astro({ ceu, tamanho, escuro, parado }: { ceu: Ceu; tamanho: number; escuro: boolean; parado: boolean }) {
+  const giro = useRef(new Animated.Value(0)).current;
+  const pisca = useRef(new Animated.Value(1)).current;
+  const nativo = Platform.OS !== 'web';
+
+  useEffect(() => {
+    if (parado) {
+      giro.setValue(0);
+      pisca.setValue(1);
+      return;
+    }
+    const anim =
+      ceu.astro === 'sol'
+        ? Animated.loop(Animated.timing(giro, { toValue: 1, duration: 40_000, easing: Easing.linear, useNativeDriver: nativo }))
+        : Animated.loop(
+            Animated.sequence([
+              Animated.timing(pisca, { toValue: 0.35, duration: 1600, easing: Easing.inOut(Easing.sin), useNativeDriver: nativo }),
+              Animated.timing(pisca, { toValue: 1, duration: 1600, easing: Easing.inOut(Easing.sin), useNativeDriver: nativo }),
+            ]),
+          );
+    anim.start();
+    return () => anim.stop();
+  }, [ceu.astro, parado, giro, pisca, nativo]);
+
+  // Arco no alto da cena: nasce à esquerda, passa pelo topo e se põe à direita.
+  const x = 30 + ceu.progresso * 180;
+  const y = 64 - Math.sin(Math.PI * ceu.progresso) * 36;
+  const lado = tamanho * 0.22;
+  const escala = tamanho / 240;
+  const posicao = { position: 'absolute' as const, width: lado, height: lado, left: x * escala - lado / 2, top: y * escala - lado / 2 };
+
+  if (ceu.astro === 'sol') {
+    const cor = ceu.momento === 'dia' ? '#F5BE3C' : '#EF8F4A';
+    const rotate = giro.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+    return (
+      <View pointerEvents="none" style={posicao}>
+        <Animated.View style={{ position: 'absolute', width: lado, height: lado, transform: [{ rotate }] }}>
+          <Svg width={lado} height={lado} viewBox="0 0 48 48">
+            {Array.from({ length: 8 }, (_, i) => (
+              <Path key={i} d="M24 3 V9" stroke={cor} strokeWidth={2.6} strokeLinecap="round" transform={`rotate(${i * 45} 24 24)`} opacity={0.85} />
+            ))}
+          </Svg>
+        </Animated.View>
+        <Svg width={lado} height={lado} viewBox="0 0 48 48" style={{ position: 'absolute' }}>
+          <Circle cx={24} cy={24} r={14} fill={cor} opacity={0.22} />
+          <Circle cx={24} cy={24} r={10} fill={cor} />
+        </Svg>
+      </View>
+    );
+  }
+
+  const lua = escuro ? '#F1EAD0' : '#CDB874';
+  const estrelas: [number, number, number][] = [
+    [x < 120 ? 196 : 44, 30, 4],
+    [x < 120 ? 168 : 72, 54, 2.6],
+    [120, 18, 3],
+  ];
+  return (
+    <>
+      <Animated.View pointerEvents="none" style={{ position: 'absolute', width: tamanho, height: tamanho, opacity: pisca }}>
+        <Svg width={tamanho} height={tamanho} viewBox="0 0 240 240">
+          {estrelas.map(([ex, ey, r]) => (
+            <Path key={`${ex}-${ey}`} d={brilho(ex, ey, r)} fill={lua} />
+          ))}
+        </Svg>
+      </Animated.View>
+      <View pointerEvents="none" style={posicao}>
+        <Svg width={lado} height={lado} viewBox="0 0 48 48">
+          <Circle cx={24} cy={24} r={15} fill={lua} opacity={0.18} />
+          <Path d="M27 12 A12 12 0 1 0 36 29 A9.5 9.5 0 0 1 27 12 Z" fill={lua} />
+        </Svg>
+      </View>
+    </>
+  );
+}
+
 export function PlantaViva({
   especieId,
   nome,
@@ -284,6 +380,7 @@ export function PlantaViva({
   sede = false,
   chao = false,
   tamanho = 200,
+  ceu = true,
 }: {
   especieId: string;
   nome: string;
@@ -291,11 +388,15 @@ export function PlantaViva({
   sede?: boolean;
   chao?: boolean;
   tamanho?: number;
+  /** Mostra o sol ou a lua conforme a hora. */
+  ceu?: boolean;
 }) {
   const escuro = useEscuro();
+  const minutos = useMinutosAgora();
   const menosMovimento = useMenosMovimento();
   const balanco = useRef(new Animated.Value(0)).current;
   const entrada = useRef(new Animated.Value(menosMovimento ? 1 : 0.9)).current;
+  const rajada = useRef(new Animated.Value(0)).current;
   const nativo = Platform.OS !== 'web';
 
   useEffect(() => {
@@ -309,6 +410,24 @@ export function PlantaViva({
     loop.start();
     return () => loop.stop();
   }, [sede, menosMovimento, balanco, nativo]);
+
+  // De tempos em tempos passa um ventinho: as linhas cruzam a cena e a planta inclina na rajada.
+  useEffect(() => {
+    if (menosMovimento) {
+      rajada.stopAnimation();
+      rajada.setValue(0);
+      return;
+    }
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(1200),
+        Animated.timing(rajada, { toValue: 1, duration: 2600, easing: Easing.inOut(Easing.quad), useNativeDriver: nativo }),
+        Animated.delay(3400),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [menosMovimento, rajada, nativo]);
 
   // Ao mudar de estágio, a planta "cresce" com uma mola curta.
   useEffect(() => {
@@ -331,17 +450,24 @@ export function PlantaViva({
   const s = estagio === 'broto' || !desenho ? 1 : ESCALA[estagio];
   const transformacao = `translate(${120 * (1 - s)} ${172 * (1 - s)}) scale(${s})${sede ? ' rotate(6 120 172)' : ''}`;
   const rotacao = balanco.interpolate({ inputRange: [0, 1], outputRange: ['-2deg', '2deg'] });
+  // A inclinação acompanha a passagem das linhas pelo meio da cena; com sede a planta mal reage.
+  const forca = sede ? 2 : 7;
+  const inclinacao = rajada.interpolate({
+    inputRange: [0, 0.32, 0.5, 0.64, 0.78, 1],
+    outputRange: ['0deg', '0deg', `${forca}deg`, `${forca * 0.35}deg`, `${forca * 0.6}deg`, '0deg'],
+  });
   const rotulo = `${nome} ${NOMES[estagio]}${sede ? ', com sede' : ''}${chao ? ', no canteiro' : ', no vaso'}`;
 
   return (
     <View accessible accessibilityRole="image" accessibilityLabel={rotulo} style={{ width: tamanho, height: tamanho }}>
+      {ceu && <Astro ceu={ceuDoMomento(minutos)} tamanho={tamanho} escuro={escuro} parado={menosMovimento} />}
       <Animated.View
         style={{
           position: 'absolute',
           width: tamanho,
           height: tamanho,
           transformOrigin: '50% 71.7%',
-          transform: [{ rotate: rotacao }, { scale: entrada }],
+          transform: [{ rotate: rotacao }, { rotate: inclinacao }, { scale: entrada }],
         }}
       >
         <Svg width={tamanho} height={tamanho} viewBox="0 0 240 240">
@@ -386,7 +512,43 @@ export function PlantaViva({
           <Path d="M74 166 C96 160 144 160 166 166" stroke="#6E5440" strokeWidth={3} fill="none" strokeLinecap="round" />
         </Svg>
       )}
+      {!menosMovimento && <Vento rajada={rajada} tamanho={tamanho} escuro={escuro} />}
     </View>
+  );
+}
+
+/** Duas linhas de vento que cruzam a cena da esquerda para a direita a cada rajada. */
+function Vento({ rajada, tamanho, escuro }: { rajada: Animated.Value; tamanho: number; escuro: boolean }) {
+  const cor = escuro ? '#EEF1EA' : '#2E5E3A';
+  const linhas = [
+    { topo: 0.36, atraso: 0, largura: 0.42, d: 'M2 14 C30 6 52 20 80 12 C96 8 104 2 98 0' },
+    { topo: 0.55, atraso: 0.12, largura: 0.32, d: 'M2 10 C26 4 44 16 70 9' },
+  ];
+  return (
+    <>
+      {linhas.map((l, i) => {
+        const fim = Math.min(1, 0.88 + l.atraso);
+        const translateX = rajada.interpolate({
+          inputRange: [0, l.atraso, fim, 1],
+          outputRange: [-tamanho * l.largura, -tamanho * l.largura, tamanho, tamanho],
+        });
+        const opacity = rajada.interpolate({
+          inputRange: [0, l.atraso + 0.02, l.atraso + 0.18, fim - 0.2, fim, 1],
+          outputRange: [0, 0, escuro ? 0.55 : 0.45, escuro ? 0.55 : 0.45, 0, 0],
+        });
+        return (
+          <Animated.View
+            key={i}
+            pointerEvents="none"
+            style={{ position: 'absolute', left: 0, top: tamanho * l.topo, width: tamanho * l.largura, height: tamanho * 0.09, opacity, transform: [{ translateX }] }}
+          >
+            <Svg width="100%" height="100%" viewBox="0 0 100 22" preserveAspectRatio="none">
+              <Path d={l.d} stroke={cor} strokeWidth={3} fill="none" strokeLinecap="round" />
+            </Svg>
+          </Animated.View>
+        );
+      })}
+    </>
   );
 }
 
