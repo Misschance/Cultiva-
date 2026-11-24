@@ -1,0 +1,58 @@
+name: Publicar web
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publicar-web
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build web
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Exportar o app web
+        working-directory: apps/app
+        env:
+          # Valores públicos por natureza: vão no JavaScript que o navegador baixa.
+          # Nunca coloque aqui a chave service_role ou senhas (SECURITY.md).
+          EXPO_PUBLIC_SUPABASE_URL: https://dbhffzbktvoblmgoedyh.supabase.co
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_1r9aOkthk3feuOJNBH6dsA_AdCKST-E
+          EXPO_BASE_URL: /${{ github.event.repository.name }}
+        run: |
+          pnpm exportar:web
+          # Rotas como /plantio/123 não existem como arquivo: o Pages entrega o 404.html, que é o próprio app.
+          cp dist/index.html dist/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/app/dist
+
+  publicar:
+    name: Publicar no GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.publicacao.outputs.page_url }}
+    steps:
+      - id: publicacao
+        uses: actions/deploy-pages@v4
