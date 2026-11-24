@@ -43,6 +43,20 @@ export interface Especie {
   /** Como saber que está no ponto de colher (RF-4.4); null quando a literatura lida não diz. */
   pontoColheita: { texto: string; fonte: string; confianca: Confianca } | null;
   fases: FaseEspecie[];
+  /** Época de plantio por região (calendários da Embrapa); meses vazios quando a base não tem o dado. */
+  epocas: EpocaPlantio[];
+}
+
+export type Regiao = 'Norte' | 'Nordeste' | 'Centro-Oeste' | 'Sudeste' | 'Sul';
+
+export interface EpocaPlantio {
+  variedade: string | null;
+  regiao: Regiao;
+  /** 1 a 12; o fim pode vir antes do início quando a época atravessa o ano (set a fev). */
+  mesInicio: number | null;
+  mesFim: number | null;
+  /** false: a fonte desaconselha plantar nessa região; null: sem dado. */
+  recomendado: boolean | null;
 }
 
 export type TipoLocal = 'vaso' | 'canteiro' | 'quintal' | 'jardineira' | 'estufa';

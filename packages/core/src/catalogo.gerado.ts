@@ -69,6 +69,78 @@ export const CATALOGO: readonly Especie[] = [
         "fonte": "R1 Tab.1 (verão: 60-80)",
         "confianca": "A"
       }
+    ],
+    "epocas": [
+      {
+        "variedade": "inverno",
+        "regiao": "Sul",
+        "mesInicio": 2,
+        "mesFim": 10,
+        "recomendado": true
+      },
+      {
+        "variedade": "inverno",
+        "regiao": "Sudeste",
+        "mesInicio": 2,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": "inverno",
+        "regiao": "Nordeste",
+        "mesInicio": 3,
+        "mesFim": 9,
+        "recomendado": true
+      },
+      {
+        "variedade": "inverno",
+        "regiao": "Centro-Oeste",
+        "mesInicio": 3,
+        "mesFim": 9,
+        "recomendado": true
+      },
+      {
+        "variedade": "inverno",
+        "regiao": "Norte",
+        "mesInicio": 3,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Sul",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Sudeste",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Nordeste",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Centro-Oeste",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Norte",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      }
     ]
   },
   {
@@ -126,6 +198,43 @@ export const CATALOGO: readonly Especie[] = [
         "intervencoes": "Colher no ponto: R2 Tab.8",
         "fonte": "R2 Tab.8",
         "confianca": "B"
+      }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": 3,
+        "mesFim": 8,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": 3,
+        "mesFim": 8,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": 3,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": 3,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": false
       }
     ]
   },
@@ -195,6 +304,43 @@ export const CATALOGO: readonly Especie[] = [
         "intervencoes": "Colher no ponto: R1 Tab.1",
         "fonte": "R1 Tab.1",
         "confianca": "A"
+      }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": 2,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": 2,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": 4,
+        "mesFim": 8,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": 2,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": 4,
+        "mesFim": 7,
+        "recomendado": true
       }
     ]
   },
@@ -269,6 +415,43 @@ export const CATALOGO: readonly Especie[] = [
         "fonte": "R1 Tab.1",
         "confianca": "A"
       }
+    ],
+    "epocas": [
+      {
+        "variedade": "mesa",
+        "regiao": "Sul",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": "mesa",
+        "regiao": "Sudeste",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": "mesa",
+        "regiao": "Nordeste",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": "mesa",
+        "regiao": "Centro-Oeste",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": "mesa",
+        "regiao": "Norte",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      }
     ]
   },
   {
@@ -338,6 +521,43 @@ export const CATALOGO: readonly Especie[] = [
         "fonte": "R1 Tab.1",
         "confianca": "A"
       }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": 9,
+        "mesFim": 2,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": 8,
+        "mesFim": 3,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": 8,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": 7,
+        "mesFim": 12,
+        "recomendado": true
+      }
     ]
   },
   {
@@ -400,6 +620,78 @@ export const CATALOGO: readonly Especie[] = [
         "fonte": "R1 Tab.1",
         "confianca": "A"
       }
+    ],
+    "epocas": [
+      {
+        "variedade": "inverno",
+        "regiao": "Sul",
+        "mesInicio": 2,
+        "mesFim": 8,
+        "recomendado": true
+      },
+      {
+        "variedade": "inverno",
+        "regiao": "Sudeste",
+        "mesInicio": 3,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": "inverno",
+        "regiao": "Nordeste",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": false
+      },
+      {
+        "variedade": "inverno",
+        "regiao": "Centro-Oeste",
+        "mesInicio": 4,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": "inverno",
+        "regiao": "Norte",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": false
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Sul",
+        "mesInicio": 11,
+        "mesFim": 1,
+        "recomendado": true
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Sudeste",
+        "mesInicio": 10,
+        "mesFim": 3,
+        "recomendado": true
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Nordeste",
+        "mesInicio": 10,
+        "mesFim": 3,
+        "recomendado": true
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Centro-Oeste",
+        "mesInicio": 10,
+        "mesFim": 3,
+        "recomendado": true
+      },
+      {
+        "variedade": "verão",
+        "regiao": "Norte",
+        "mesInicio": 10,
+        "mesFim": 3,
+        "recomendado": true
+      }
     ]
   },
   {
@@ -461,6 +753,43 @@ export const CATALOGO: readonly Especie[] = [
         "intervencoes": "Ponto de colheita: Colher quando a raiz estiver bem desenvolvida, antes de ficar fibrosa e antes de pendoar; em geral 25 a 30 dias após semear. (R1 p.15)",
         "fonte": "R1 Tab.1 (R2: 25-30)",
         "confianca": "A"
+      }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": 3,
+        "mesFim": 8,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": 3,
+        "mesFim": 8,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": 3,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": 4,
+        "mesFim": 9,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": 3,
+        "mesFim": 8,
+        "recomendado": true
       }
     ]
   },
@@ -531,6 +860,43 @@ export const CATALOGO: readonly Especie[] = [
         "fonte": "R1 Tab.1",
         "confianca": "A"
       }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": 3,
+        "mesFim": 7,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": 4,
+        "mesFim": 8,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": 4,
+        "mesFim": 10,
+        "recomendado": true
+      }
     ]
   },
   {
@@ -589,6 +955,43 @@ export const CATALOGO: readonly Especie[] = [
         "fonte": "R1 Tab.1",
         "confianca": "A"
       }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": 3,
+        "mesFim": 9,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": 3,
+        "mesFim": 9,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": 3,
+        "mesFim": 8,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": 3,
+        "mesFim": 8,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": false
+      }
     ]
   },
   {
@@ -646,6 +1049,43 @@ export const CATALOGO: readonly Especie[] = [
         "intervencoes": "Colher no ponto: R1 Tab.1",
         "fonte": "R1 Tab.1",
         "confianca": "A"
+      }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": 9,
+        "mesFim": 1,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": 8,
+        "mesFim": 2,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": 1,
+        "mesFim": 12,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": 8,
+        "mesFim": 4,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": 4,
+        "mesFim": 10,
+        "recomendado": true
       }
     ]
   },
@@ -706,6 +1146,43 @@ export const CATALOGO: readonly Especie[] = [
         "fonte": "R5: colher na floração, de manhã até 11 h",
         "confianca": "A"
       }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      }
     ]
   },
   {
@@ -754,6 +1231,43 @@ export const CATALOGO: readonly Especie[] = [
         "fonte": "R6: folhas a partir do 4º mês",
         "confianca": "A"
       }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": null
+      }
     ]
   },
   {
@@ -797,6 +1311,43 @@ export const CATALOGO: readonly Especie[] = [
         "intervencoes": "Colher no ponto: R1 Tab.1",
         "fonte": "R1 Tab.1",
         "confianca": "A"
+      }
+    ],
+    "epocas": [
+      {
+        "variedade": null,
+        "regiao": "Sul",
+        "mesInicio": 3,
+        "mesFim": 4,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Sudeste",
+        "mesInicio": 3,
+        "mesFim": 4,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Nordeste",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": false
+      },
+      {
+        "variedade": null,
+        "regiao": "Centro-Oeste",
+        "mesInicio": 2,
+        "mesFim": 3,
+        "recomendado": true
+      },
+      {
+        "variedade": null,
+        "regiao": "Norte",
+        "mesInicio": null,
+        "mesFim": null,
+        "recomendado": false
       }
     ]
   }

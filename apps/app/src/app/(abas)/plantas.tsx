@@ -1,6 +1,7 @@
 import { CATALOGO, avaliarLuz, type SituacaoLuz } from '@cultivae/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
+import { PlanteAgora } from '../../components/plante-agora';
 import { Campo, Cartao, Opcoes, Paragrafo, Tela, Titulo, Texto, useCores } from '../../components/ui';
 import { useHorta } from '../../lib/horta';
 import { NOME_GRUPO } from '../../lib/rotulos';
@@ -27,7 +28,7 @@ export default function Plantas() {
   const [busca, setBusca] = useState('');
   const [filtro, setFiltro] = useState<Filtro>('todas');
   const { local: localParam } = useLocalSearchParams<{ local?: string }>();
-  const { dados } = useHorta();
+  const { dados, hoje } = useHorta();
   const locaisComSol = (dados?.locais ?? []).filter((l) => l.horasSol != null);
   const [localId, setLocalId] = useState<string>('nenhum');
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function Plantas() {
   return (
     <Tela topo>
       <Titulo>Plantas</Titulo>
+      <PlanteAgora cidade={dados?.perfil.cidade} hoje={hoje} />
       <Campo rotulo="Buscar" value={busca} onChangeText={setBusca} placeholder="Ex.: alface, tomate" maxLength={60} autoCorrect={false} />
       <Opcoes
         rotulo="Mostrar"
