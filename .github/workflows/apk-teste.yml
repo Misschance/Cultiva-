@@ -1,0 +1,59 @@
+name: APK de teste
+
+# Gera um APK para instalar no celular e testar. Não é a versão da loja:
+# vai assinado com a chave de debug do modelo do Expo e não deve ser distribuído.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'apps/app/**'
+      - 'packages/core/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/apk-teste.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apk-teste-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    name: Gerar APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - run: pnpm install --frozen-lockfile
+      - name: Gerar o projeto Android
+        working-directory: apps/app
+        run: npx expo prebuild --platform android --no-install
+      - name: Compilar o APK
+        working-directory: apps/app/android
+        env:
+          # Valores públicos por natureza: vão dentro do app. Nunca a service_role (SECURITY.md).
+          EXPO_PUBLIC_SUPABASE_URL: https://dbhffzbktvoblmgoedyh.supabase.co
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_1r9aOkthk3feuOJNBH6dsA_AdCKST-E
+          NODE_ENV: production
+        # Só arm64: cobre os celulares Android atuais e deixa o build mais rápido.
+        run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cultivae-teste-apk
+          path: apps/app/android/app/build/outputs/apk/release/*.apk
+          retention-days: 14
