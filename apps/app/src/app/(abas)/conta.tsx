@@ -41,10 +41,10 @@ export default function Conta() {
     }
   }
 
-  if (!perfil) return <Tela><Paragrafo>Carregando…</Paragrafo></Tela>;
+  if (!perfil) return <Tela topo><Paragrafo>Carregando…</Paragrafo></Tela>;
 
   return (
-    <Tela>
+    <Tela topo>
       <Titulo>Conta</Titulo>
       <Paragrafo suave>Entrou como {sessao?.user.email}</Paragrafo>
       {msg && <Aviso tipo={msg.tipo === 'erro' ? 'erro' : 'ok'}>{msg.texto}</Aviso>}
