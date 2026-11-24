@@ -1,0 +1,7 @@
+# Regras padrão do gitleaks, com uma única exceção.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Chave publishable do Supabase: pública por natureza, vai no JavaScript do app web (SECURITY.md). Só esta chave, nunca service_role."
+regexes = ['''^sb_publishable_1r9aOkthk3feuOJNBH6dsA_AdCKST-E$''']
