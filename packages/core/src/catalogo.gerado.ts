@@ -1,5 +1,5 @@
 // Arquivo gerado por scripts/gerar-catalogo.ts a partir de data/base-plantas/. Não edite à mão.
-import type { Especie } from './tipos';
+import type { Especie, PlantaDeCasa } from './tipos';
 
 export const CATALOGO: readonly Especie[] = [
   {
@@ -1353,6 +1353,992 @@ export const CATALOGO: readonly Especie[] = [
   }
 ];
 
+/** Plantas de casa (ornamentais, base v2): sem colheita nem época por região. */
+export const PLANTAS_DE_CASA: readonly PlantaDeCasa[] = [
+  {
+    "id": "jiboia",
+    "nomePopular": "Jiboia",
+    "outrosNomes": "Pothos",
+    "nomeCientifico": "Epipremnum aureum",
+    "tipo": "folhagem",
+    "luz": {
+      "categoria": "indireta_forte",
+      "texto": "Luz clara sem sol direto; aguenta bastante tempo com pouca luz, mas as folhas mescladas perdem a cor.",
+      "horasSolDireto": null,
+      "fonte": "N1; C1",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Deixar o substrato secar entre as regas.",
+      "umidadeSolo": "seco entre regas",
+      "fonte": "N1; C1",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Substrato aerado e bem drenado, rico em matéria orgânica.",
+      "vaso": "Com furo de drenagem.",
+      "fonte": "N1; C1"
+    },
+    "adubo": {
+      "texto": "Adubo para plantas de casa a cada 2 meses na primavera e no verão; não adubar no inverno.",
+      "fonte": "N1; C1",
+      "confianca": "A"
+    },
+    "temperatura": {
+      "ideal": "21 a 29 °C de dia, 16 a 21 °C à noite",
+      "minimaC": null,
+      "fonte": "C1"
+    },
+    "umidadeAr": "Ideal 50 a 70%; tolera o ar comum de casa (30 a 60%).",
+    "propagacao": "Estaca com pelo menos um nó; enraíza fácil na água.",
+    "crescimento": "médio",
+    "toxicidade": {
+      "caes": {
+        "toxica": true,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": true,
+        "nota": null
+      },
+      "gravidadeHumanos": "média (N1) / leve (C1)",
+      "sintomas": "Irritação, dor e inchaço na boca, salivação, vômito e dificuldade para engolir (oxalato de cálcio). Pode irritar a pele.",
+      "fonte": "N1; C1",
+      "confianca": "A"
+    },
+    "problemas": "Excesso de água: raiz podre e bordas pretas. Cochonilha e ácaro.",
+    "dica": "Uma das plantas mais fáceis. Na dúvida, espere a terra secar antes de regar.",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Deixar o substrato secar entre as regas.",
+        "verificarTerraDias": 7,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": "Adubo para plantas de casa a cada 2 meses na primavera e no verão; não adubar no inverno.",
+        "adubacaoFonte": "N1; C1"
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Deixar o substrato secar entre as regas.",
+        "verificarTerraDias": 10,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": "Não adubar.",
+        "adubacaoFonte": "N1; C1"
+      }
+    ]
+  },
+  {
+    "id": "samambaia",
+    "nomePopular": "Samambaia",
+    "outrosNomes": "Samambaia-americana, samambaia-de-boston",
+    "nomeCientifico": "Nephrolepis exaltata",
+    "tipo": "folhagem",
+    "luz": {
+      "categoria": "indireta_forte",
+      "texto": "Luz clara indireta, sem sol direto.",
+      "horasSolDireto": null,
+      "fonte": "N2",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Manter a terra sempre úmida, sem deixar secar; regar menos no inverno, quando o excesso apodrece a raiz.",
+      "umidadeSolo": "sempre úmido",
+      "fonte": "N2",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Terra bem drenada.",
+      "vaso": "Com furo de drenagem.",
+      "fonte": "N2"
+    },
+    "adubo": {
+      "texto": null,
+      "fonte": null,
+      "confianca": null
+    },
+    "temperatura": {
+      "ideal": "16 a 21 °C",
+      "minimaC": null,
+      "fonte": "N2"
+    },
+    "umidadeAr": "Alta. Perto de cozinha ou banheiro, ou sobre bandeja com pedrinhas molhadas.",
+    "propagacao": null,
+    "crescimento": "rápido",
+    "toxicidade": {
+      "caes": {
+        "toxica": false,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": false,
+        "nota": null
+      },
+      "gravidadeHumanos": null,
+      "sintomas": null,
+      "fonte": "A2; N2",
+      "confianca": "A"
+    },
+    "problemas": "Ar seco favorece cochonilha e ácaro.",
+    "dica": "Ar seco é o maior inimigo. Borrifar ou usar bandeja com pedras molhadas ajuda.",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Manter a terra sempre úmida, sem deixar secar; regar menos no inverno, quando o excesso apodrece a raiz.",
+        "verificarTerraDias": 2,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": null,
+        "adubacaoFonte": null
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Manter a terra sempre úmida, sem deixar secar; regar menos no inverno, quando o excesso apodrece a raiz.",
+        "verificarTerraDias": 4,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": null,
+        "adubacaoFonte": null
+      }
+    ]
+  },
+  {
+    "id": "espada_sao_jorge",
+    "nomePopular": "Espada-de-são-jorge",
+    "outrosNomes": "Sansevieria, língua-de-sogra",
+    "nomeCientifico": "Dracaena trifasciata (sin. Sansevieria trifasciata)",
+    "tipo": "folhagem",
+    "luz": {
+      "categoria": "meia_sombra",
+      "texto": "2 a 6 horas de sol direto por dia; tolera muito pouca luz.",
+      "horasSolDireto": "2-6",
+      "fonte": "N3",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Da primavera ao outono, deixar a terra secar entre as regas. No inverno, regar só a cada 1 ou 2 meses. Excesso de água apodrece a raiz.",
+      "umidadeSolo": "seco entre regas",
+      "fonte": "N3",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Terra bem drenada, pode ser arenosa.",
+      "vaso": "Com furo de drenagem.",
+      "fonte": "N3"
+    },
+    "adubo": {
+      "texto": null,
+      "fonte": null,
+      "confianca": null
+    },
+    "temperatura": {
+      "ideal": "Tolera frescor, por volta de 10 °C",
+      "minimaC": null,
+      "fonte": "N3"
+    },
+    "umidadeAr": "Tolera ar seco.",
+    "propagacao": "Divisão da touceira ou estaca de folha.",
+    "crescimento": "médio",
+    "toxicidade": {
+      "caes": {
+        "toxica": true,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": true,
+        "nota": null
+      },
+      "gravidadeHumanos": "baixa",
+      "sintomas": "Se ingerida: vômito, náusea, diarreia, salivação (saponinas). A seiva pode irritar a pele.",
+      "fonte": "N3",
+      "confianca": "A"
+    },
+    "problemas": "Excesso de água: raiz podre. Cochonilha e ácaro.",
+    "dica": "Aguenta pouca luz e ar seco; o que mais mata é água demais (N3).",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Da primavera ao outono, deixar a terra secar entre as regas. No inverno, regar só a cada 1 ou 2 meses. Excesso de água apodrece a raiz.",
+        "verificarTerraDias": 14,
+        "verificarConfianca": "C",
+        "verificarFonte": "N3: no inverno regar a cada 1-2 meses",
+        "adubacao": null,
+        "adubacaoFonte": null
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Da primavera ao outono, deixar a terra secar entre as regas. No inverno, regar só a cada 1 ou 2 meses. Excesso de água apodrece a raiz.",
+        "verificarTerraDias": 30,
+        "verificarConfianca": "A",
+        "verificarFonte": "N3: no inverno regar a cada 1-2 meses",
+        "adubacao": null,
+        "adubacaoFonte": null
+      }
+    ]
+  },
+  {
+    "id": "zamioculca",
+    "nomePopular": "Zamioculca",
+    "outrosNomes": "ZZ",
+    "nomeCientifico": "Zamioculcas zamiifolia",
+    "tipo": "folhagem",
+    "luz": {
+      "categoria": "indireta_forte",
+      "texto": "Melhor com luz clara indireta; tolera pouca luz. Sol direto queima as folhas.",
+      "horasSolDireto": null,
+      "fonte": "N4",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "No verão, 2 vezes por mês, só se a terra estiver totalmente seca. No inverno, 1 vez por mês. Não tolera encharcamento.",
+      "umidadeSolo": "seco entre regas",
+      "fonte": "N4",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Terra orgânica ou arenosa, bem drenada.",
+      "vaso": "Com furo de drenagem.",
+      "fonte": "N4"
+    },
+    "adubo": {
+      "texto": "Adubo líquido equilibrado para plantas de casa, 1 ou 2 vezes por ano.",
+      "fonte": "N4",
+      "confianca": "A"
+    },
+    "temperatura": {
+      "ideal": "Proteger abaixo de 15 °C",
+      "minimaC": 15,
+      "fonte": "N4"
+    },
+    "umidadeAr": null,
+    "propagacao": "Divisão ou estaca de folha.",
+    "crescimento": "lento",
+    "toxicidade": {
+      "caes": {
+        "toxica": true,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": true,
+        "nota": null
+      },
+      "gravidadeHumanos": "média",
+      "sintomas": "Diarreia e vômito se as folhas forem comidas em quantidade (oxalato de cálcio).",
+      "fonte": "N4",
+      "confianca": "A"
+    },
+    "problemas": "Poucos problemas; observar cochonilha.",
+    "dica": "Boa para quem esquece de regar. Cresce devagar, é normal.",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "No verão, 2 vezes por mês, só se a terra estiver totalmente seca. No inverno, 1 vez por mês. Não tolera encharcamento.",
+        "verificarTerraDias": 15,
+        "verificarConfianca": "A",
+        "verificarFonte": "N4: 2x/mês no verão, 1x/mês no inverno",
+        "adubacao": "Adubo líquido equilibrado para plantas de casa, 1 ou 2 vezes por ano.",
+        "adubacaoFonte": "N4"
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "No verão, 2 vezes por mês, só se a terra estiver totalmente seca. No inverno, 1 vez por mês. Não tolera encharcamento.",
+        "verificarTerraDias": 30,
+        "verificarConfianca": "A",
+        "verificarFonte": "N4: 2x/mês no verão, 1x/mês no inverno",
+        "adubacao": "Reduzir ou suspender (C).",
+        "adubacaoFonte": "N4"
+      }
+    ]
+  },
+  {
+    "id": "comigo_ninguem_pode",
+    "nomePopular": "Comigo-ninguém-pode",
+    "outrosNomes": "Difembáquia",
+    "nomeCientifico": "Dieffenbachia seguine",
+    "tipo": "folhagem",
+    "luz": {
+      "categoria": "indireta_forte",
+      "texto": "Luz indireta; proteger do sol direto e de correntes de ar frio.",
+      "horasSolDireto": null,
+      "fonte": "N5",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Regar bem e esperar os 2,5 cm de cima da terra secarem antes de regar de novo.",
+      "umidadeSolo": "levemente úmido",
+      "fonte": "N5",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Terra solta, fértil e rica em matéria orgânica; pH ácido a neutro.",
+      "vaso": "Com furo de drenagem.",
+      "fonte": "N5"
+    },
+    "adubo": {
+      "texto": null,
+      "fonte": null,
+      "confianca": null
+    },
+    "temperatura": {
+      "ideal": "Temperaturas moderadas, sem vento frio",
+      "minimaC": null,
+      "fonte": "N5"
+    },
+    "umidadeAr": "Alta.",
+    "propagacao": "Divisão ou estaca de caule ou raiz.",
+    "crescimento": null,
+    "toxicidade": {
+      "caes": {
+        "toxica": true,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": true,
+        "nota": null
+      },
+      "gravidadeHumanos": "alta",
+      "sintomas": "Queimação e inchaço de lábios, língua e garganta, dificuldade para falar e engolir, náusea e vômito. Seiva nos olhos pode lesar a córnea. Pode ser fatal para pets.",
+      "fonte": "N5",
+      "confianca": "A"
+    },
+    "problemas": "Ácaro, cochonilha, mosca-branca, mosquitinho do substrato, pulgão; mancha de folha e raiz podre.",
+    "dica": "Muito tóxica: deixe longe de crianças e pets e use luvas ao podar.",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Regar bem e esperar os 2,5 cm de cima da terra secarem antes de regar de novo.",
+        "verificarTerraDias": 5,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": null,
+        "adubacaoFonte": null
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Regar bem e esperar os 2,5 cm de cima da terra secarem antes de regar de novo.",
+        "verificarTerraDias": 7,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": null,
+        "adubacaoFonte": null
+      }
+    ]
+  },
+  {
+    "id": "lirio_da_paz",
+    "nomePopular": "Lírio-da-paz",
+    "outrosNomes": "Espatifilo",
+    "nomeCientifico": "Spathiphyllum spp.",
+    "tipo": "flor",
+    "luz": {
+      "categoria": "pouca_luz",
+      "texto": "Meia-sombra a sombra. Não colocar no sol direto.",
+      "horasSolDireto": null,
+      "fonte": "N6",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Manter a terra úmida, sem encharcar; deixar secar um pouco entre as regas. Regar por baixo funciona bem.",
+      "umidadeSolo": "úmido",
+      "fonte": "N6",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Rico em matéria orgânica, pH ácido.",
+      "vaso": "Com furo de drenagem.",
+      "fonte": "N6"
+    },
+    "adubo": {
+      "texto": "Usar 1/4 da dose do rótulo e lavar o substrato com água entre as adubações.",
+      "fonte": "N6",
+      "confianca": "A"
+    },
+    "temperatura": {
+      "ideal": "20 a 29 °C de dia",
+      "minimaC": 4,
+      "fonte": "N6 (abaixo de 4 °C por muito tempo danifica a planta)"
+    },
+    "umidadeAr": "Ar seco causa pontas marrons.",
+    "propagacao": "Divisão.",
+    "crescimento": null,
+    "toxicidade": {
+      "caes": {
+        "toxica": true,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": true,
+        "nota": null
+      },
+      "gravidadeHumanos": "média",
+      "sintomas": "Dor forte e queimação na boca, lábios e garganta, salivação, vômito, dificuldade para engolir (oxalato de cálcio).",
+      "fonte": "N6",
+      "confianca": "A"
+    },
+    "problemas": "Cochonilha é a praga mais comum.",
+    "dica": "Uma das poucas que florescem na sombra. Regar por baixo funciona bem (N6).",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Manter a terra úmida, sem encharcar; deixar secar um pouco entre as regas. Regar por baixo funciona bem.",
+        "verificarTerraDias": 3,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": "Usar 1/4 da dose do rótulo e lavar o substrato com água entre as adubações.",
+        "adubacaoFonte": "N6"
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Manter a terra úmida, sem encharcar; deixar secar um pouco entre as regas. Regar por baixo funciona bem.",
+        "verificarTerraDias": 5,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": "Reduzir ou suspender (C).",
+        "adubacaoFonte": "N6"
+      }
+    ]
+  },
+  {
+    "id": "costela_de_adao",
+    "nomePopular": "Costela-de-adão",
+    "outrosNomes": "Monstera",
+    "nomeCientifico": "Monstera deliciosa",
+    "tipo": "folhagem",
+    "luz": {
+      "categoria": "indireta_forte",
+      "texto": "Claridade moderada, sem sol direto. As mescladas precisam de mais luz.",
+      "horasSolDireto": null,
+      "fonte": "N7",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Regar bem e deixar secar de 1/4 a 1/3 da terra antes de regar de novo.",
+      "umidadeSolo": "levemente úmido",
+      "fonte": "N7",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Rico em matéria orgânica, bem drenado.",
+      "vaso": "Com furo de drenagem.",
+      "fonte": "N7"
+    },
+    "adubo": {
+      "texto": null,
+      "fonte": null,
+      "confianca": null
+    },
+    "temperatura": {
+      "ideal": "16 a 29 °C",
+      "minimaC": null,
+      "fonte": "N7"
+    },
+    "umidadeAr": "Alta; umidificador ou bandeja com pedrinhas molhadas.",
+    "propagacao": "Alporquia ou estaca de caule.",
+    "crescimento": "rápido",
+    "toxicidade": {
+      "caes": {
+        "toxica": true,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": true,
+        "nota": null
+      },
+      "gravidadeHumanos": "baixa",
+      "sintomas": "Queimação na boca e garganta, náusea, vômito, salivação; só em grande quantidade. Pode irritar a pele.",
+      "fonte": "N7",
+      "confianca": "A"
+    },
+    "problemas": "Poucos problemas; cochonilha.",
+    "dica": "Cresce rápido e fica grande, então precisa de espaço (N7).",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Regar bem e deixar secar de 1/4 a 1/3 da terra antes de regar de novo.",
+        "verificarTerraDias": 7,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": null,
+        "adubacaoFonte": null
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Regar bem e deixar secar de 1/4 a 1/3 da terra antes de regar de novo.",
+        "verificarTerraDias": 10,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": null,
+        "adubacaoFonte": null
+      }
+    ]
+  },
+  {
+    "id": "clorofito",
+    "nomePopular": "Clorofito",
+    "outrosNomes": "Gravatinha, planta-aranha",
+    "nomeCientifico": "Chlorophytum comosum",
+    "tipo": "folhagem",
+    "luz": {
+      "categoria": "meia_sombra",
+      "texto": "Luz média; tolera sombra. Não tolera sol direto.",
+      "horasSolDireto": null,
+      "fonte": "N8",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Cresce melhor com terra úmida, mas tolera seca. Regar menos no inverno. Cloro e flúor da água da torneira podem queimar as pontas.",
+      "umidadeSolo": "úmido",
+      "fonte": "N8",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Terra bem drenada.",
+      "vaso": "Com furo de drenagem.",
+      "fonte": "N8"
+    },
+    "adubo": {
+      "texto": "Não exagerar no adubo, porque reduz as mudinhas.",
+      "fonte": "N8",
+      "confianca": "A"
+    },
+    "temperatura": {
+      "ideal": "Acima de 7 °C",
+      "minimaC": 7,
+      "fonte": "N8"
+    },
+    "umidadeAr": "Média.",
+    "propagacao": "Mudinhas que nascem nas hastes, ou divisão.",
+    "crescimento": "médio",
+    "toxicidade": {
+      "caes": {
+        "toxica": false,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": false,
+        "nota": null
+      },
+      "gravidadeHumanos": null,
+      "sintomas": null,
+      "fonte": "A1; N8",
+      "confianca": "A"
+    },
+    "problemas": "Poucos problemas. Pontas queimadas pela água da torneira.",
+    "dica": "Segura para casa com pets. As mudinhas penduradas viram plantas novas.",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Cresce melhor com terra úmida, mas tolera seca. Regar menos no inverno. Cloro e flúor da água da torneira podem queimar as pontas.",
+        "verificarTerraDias": 5,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": "Não exagerar no adubo, porque reduz as mudinhas.",
+        "adubacaoFonte": "N8"
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Cresce melhor com terra úmida, mas tolera seca. Regar menos no inverno. Cloro e flúor da água da torneira podem queimar as pontas.",
+        "verificarTerraDias": 10,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": "Reduzir ou suspender (C).",
+        "adubacaoFonte": "N8"
+      }
+    ]
+  },
+  {
+    "id": "babosa",
+    "nomePopular": "Babosa",
+    "outrosNomes": "Aloe",
+    "nomeCientifico": "Aloe vera",
+    "tipo": "suculenta",
+    "luz": {
+      "categoria": "sol_direto",
+      "texto": "Sol pleno (6 horas ou mais) a meia-sombra.",
+      "horasSolDireto": "6+",
+      "fonte": "N9",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Deixar a terra secar completamente entre as regas; regar menos no inverno. Excesso apodrece a raiz.",
+      "umidadeSolo": "seco entre regas",
+      "fonte": "N9",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Muito bem drenado, próprio para suculentas.",
+      "vaso": "Com vários furos; vaso de barro é o melhor.",
+      "fonte": "N9"
+    },
+    "adubo": {
+      "texto": null,
+      "fonte": null,
+      "confianca": null
+    },
+    "temperatura": {
+      "ideal": null,
+      "minimaC": null,
+      "fonte": null
+    },
+    "umidadeAr": null,
+    "propagacao": "Mudas laterais (divisão).",
+    "crescimento": "médio",
+    "toxicidade": {
+      "caes": {
+        "toxica": true,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": true,
+        "nota": null
+      },
+      "gravidadeHumanos": "baixa",
+      "sintomas": "Cólica, diarreia, urina avermelhada; o látex irrita a pele.",
+      "fonte": "N9",
+      "confianca": "A"
+    },
+    "problemas": "Cochonilha e pulgão; mancha de folha, ferrugem.",
+    "dica": "Gosta de sol e de pouca água. Vaso de barro ajuda a terra secar.",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Deixar a terra secar completamente entre as regas; regar menos no inverno. Excesso apodrece a raiz.",
+        "verificarTerraDias": 14,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": null,
+        "adubacaoFonte": null
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Deixar a terra secar completamente entre as regas; regar menos no inverno. Excesso apodrece a raiz.",
+        "verificarTerraDias": 21,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": null,
+        "adubacaoFonte": null
+      }
+    ]
+  },
+  {
+    "id": "anturio",
+    "nomePopular": "Antúrio",
+    "outrosNomes": null,
+    "nomeCientifico": "Anthurium andraeanum",
+    "tipo": "flor",
+    "luz": {
+      "categoria": "indireta_forte",
+      "texto": "Luz clara indireta; sol direto queima as folhas.",
+      "horasSolDireto": null,
+      "fonte": "N10",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Regar quando os 2,5 cm de cima da terra estiverem secos.",
+      "umidadeSolo": "levemente úmido",
+      "fonte": "N10",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Úmido e bem drenado.",
+      "vaso": "Com furo de drenagem.",
+      "fonte": "N10"
+    },
+    "adubo": {
+      "texto": "Adubo líquido toda semana na época de crescimento.",
+      "fonte": "N10",
+      "confianca": "A"
+    },
+    "temperatura": {
+      "ideal": "18 a 27 °C, sem vento frio",
+      "minimaC": null,
+      "fonte": "N10"
+    },
+    "umidadeAr": "60 a 80%.",
+    "propagacao": "Divisão ou estaca.",
+    "crescimento": "lento",
+    "toxicidade": {
+      "caes": {
+        "toxica": true,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": true,
+        "nota": null
+      },
+      "gravidadeHumanos": "baixa",
+      "sintomas": "Salivação, dor e inchaço na boca, dificuldade para engolir, vômito. A seiva irrita pele e olhos.",
+      "fonte": "N10",
+      "confianca": "A"
+    },
+    "problemas": "Excesso de água: raiz podre. Pulgão, ácaro, cochonilha; mancha de folha com pouca ventilação.",
+    "dica": "Gosta de ar úmido. Ambiente com ar-condicionado resseca.",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Regar quando os 2,5 cm de cima da terra estiverem secos.",
+        "verificarTerraDias": 4,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": "Adubo líquido toda semana na época de crescimento.",
+        "adubacaoFonte": "N10"
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Regar quando os 2,5 cm de cima da terra estiverem secos.",
+        "verificarTerraDias": 7,
+        "verificarConfianca": "C",
+        "verificarFonte": null,
+        "adubacao": "Reduzir ou suspender (C).",
+        "adubacaoFonte": "N10"
+      }
+    ]
+  },
+  {
+    "id": "orquidea",
+    "nomePopular": "Orquídea-borboleta",
+    "outrosNomes": "Falenópsis",
+    "nomeCientifico": "Phalaenopsis spp.",
+    "tipo": "flor",
+    "luz": {
+      "categoria": "pouca_luz",
+      "texto": "Prefere pouca luz. Melhor lugar: janela voltada para o nascente (leste).",
+      "horasSolDireto": null,
+      "fonte": "N11",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Planta adulta: 1 vez por semana, mais no calor. Deixar o substrato secar um pouco. Regar de manhã, com água morna, e deixar escorrer bem.",
+      "umidadeSolo": "seco um pouco entre regas",
+      "fonte": "N11",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "À base de casca (não usar só musgo).",
+      "vaso": "Drenagem excelente.",
+      "fonte": "N11"
+    },
+    "adubo": {
+      "texto": "Adubo equilibrado a meia dose 2 vezes por mês, ou 1/4 da dose toda semana.",
+      "fonte": "N11",
+      "confianca": "A"
+    },
+    "temperatura": {
+      "ideal": "Quente",
+      "minimaC": null,
+      "fonte": "N11"
+    },
+    "umidadeAr": "Alta.",
+    "propagacao": null,
+    "crescimento": null,
+    "toxicidade": {
+      "caes": {
+        "toxica": false,
+        "nota": null
+      },
+      "gatos": {
+        "toxica": false,
+        "nota": null
+      },
+      "gravidadeHumanos": null,
+      "sintomas": null,
+      "fonte": "N11 (etiqueta da página)",
+      "confianca": "A"
+    },
+    "problemas": "Cochonilha; mancha de botrytis nas flores; queda de botões com mudança de lugar ou temperatura.",
+    "dica": "Para refazer a flor, algumas precisam de noites frescas (cerca de 13 °C) por uma semana no outono (N11).",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Planta adulta: 1 vez por semana, mais no calor. Deixar o substrato secar um pouco. Regar de manhã, com água morna, e deixar escorrer bem.",
+        "verificarTerraDias": 7,
+        "verificarConfianca": "A",
+        "verificarFonte": "N11: 1x/semana, mais no calor",
+        "adubacao": "Adubo equilibrado a meia dose 2 vezes por mês, ou 1/4 da dose toda semana.",
+        "adubacaoFonte": "N11"
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Planta adulta: 1 vez por semana, mais no calor. Deixar o substrato secar um pouco. Regar de manhã, com água morna, e deixar escorrer bem.",
+        "verificarTerraDias": 7,
+        "verificarConfianca": "A",
+        "verificarFonte": "N11: 1x/semana, mais no calor",
+        "adubacao": "Reduzir ou suspender (C).",
+        "adubacaoFonte": "N11"
+      }
+    ]
+  },
+  {
+    "id": "suculentas",
+    "nomePopular": "Suculentas (ex.: echevéria)",
+    "outrosNomes": "Rosinha-de-pedra",
+    "nomeCientifico": "vários gêneros; referência Echeveria spp.",
+    "tipo": "suculenta",
+    "luz": {
+      "categoria": "sol_direto",
+      "texto": "Muita luz: echevéria em sol pleno, 6 horas ou mais (N12). Com pouca luz fica comprida e pálida (I1).",
+      "horasSolDireto": "6+",
+      "fonte": "N12; I1",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Regar até escorrer e só regar de novo com a terra totalmente seca. Comece a cada 2 a 3 semanas e ajuste. No inverno com pouca luz, só o bastante para não murchar.",
+      "umidadeSolo": "seco entre regas",
+      "fonte": "I1; U1",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "1 parte de terra ou casca para 2 partes de material mineral (perlita, areia grossa, pedrisco), ou mistura pronta para cactos e suculentas.",
+      "vaso": "Obrigatório ter furo. Terracota é o ideal; pedra no fundo não substitui o furo.",
+      "fonte": "I1"
+    },
+    "adubo": {
+      "texto": "Primavera e verão: adubo a 1/2 ou 1/4 da dose do rótulo a cada 3 ou 4 regas. Não adubar no inverno.",
+      "fonte": "I1",
+      "confianca": "A"
+    },
+    "temperatura": {
+      "ideal": "13 a 24 °C, com noites mais frescas; algumas toleram de 7 a 29 °C",
+      "minimaC": 7,
+      "fonte": "I1"
+    },
+    "umidadeAr": null,
+    "propagacao": "Folha, estaca de caule ou mudinhas laterais.",
+    "crescimento": null,
+    "toxicidade": {
+      "caes": {
+        "toxica": false,
+        "nota": "echevéria"
+      },
+      "gatos": {
+        "toxica": false,
+        "nota": "echevéria"
+      },
+      "gravidadeHumanos": null,
+      "sintomas": null,
+      "fonte": "N12 (etiqueta da página)",
+      "confianca": "A"
+    },
+    "problemas": "Não tolera ficar molhada: amarela, amolece e apodrece. Cochonilha e ácaro.",
+    "dica": "Erro número 1 é regar demais. Folha mole e transparente é sinal de água em excesso.",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Regar até escorrer e só regar de novo com a terra totalmente seca. Comece a cada 2 a 3 semanas e ajuste. No inverno com pouca luz, só o bastante para não murchar.",
+        "verificarTerraDias": 14,
+        "verificarConfianca": "A",
+        "verificarFonte": "I1: começar a cada 2-3 semanas",
+        "adubacao": "Primavera e verão: adubo a 1/2 ou 1/4 da dose do rótulo a cada 3 ou 4 regas. Não adubar no inverno.",
+        "adubacaoFonte": "I1"
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Regar até escorrer e só regar de novo com a terra totalmente seca. Comece a cada 2 a 3 semanas e ajuste. No inverno com pouca luz, só o bastante para não murchar.",
+        "verificarTerraDias": 21,
+        "verificarConfianca": "C",
+        "verificarFonte": "I1: começar a cada 2-3 semanas",
+        "adubacao": "Não adubar.",
+        "adubacaoFonte": "I1"
+      }
+    ]
+  },
+  {
+    "id": "cacto",
+    "nomePopular": "Cacto",
+    "outrosNomes": null,
+    "nomeCientifico": "família Cactaceae (cactos de deserto)",
+    "tipo": "cacto",
+    "luz": {
+      "categoria": "sol_direto",
+      "texto": "Janela com sol direto várias horas por dia (C2). Cactos de mata, como a flor-de-maio, preferem luz filtrada.",
+      "horasSolDireto": "várias",
+      "fonte": "C2; U1",
+      "confianca": "A"
+    },
+    "rega": {
+      "regra": "Na primavera e no verão, regar quando a terra secar. No inverno, quase seco: rega leve a cada poucas semanas. Nunca deixar água parada no prato.",
+      "umidadeSolo": "seco entre regas",
+      "fonte": "C2; U1",
+      "confianca": "A"
+    },
+    "substrato": {
+      "texto": "Partes iguais de terra para vasos e areia grossa; deve esfarelar ao ser apertada.",
+      "vaso": "Com furo; só um pouco maior que o anterior, porque vaso grande demais segura umidade.",
+      "fonte": "C2; U1"
+    },
+    "adubo": {
+      "texto": "Adubo com pouco nitrogênio (ex.: 5-10-5) 1 vez por mês no verão (C2), ou 1 a 2 vezes por ano a meia dose (U1). Não adubar no inverno.",
+      "fonte": "C2; U1",
+      "confianca": "A"
+    },
+    "temperatura": {
+      "ideal": "18 a 29 °C no crescimento; 7 a 13 °C no repouso de inverno ajuda a florir",
+      "minimaC": 7,
+      "fonte": "C2"
+    },
+    "umidadeAr": "Ar seco (10 a 30%) é tolerado.",
+    "propagacao": "Sementes, estacas, mudinhas laterais ou enxertia.",
+    "crescimento": "lento",
+    "toxicidade": {
+      "caes": null,
+      "gatos": null,
+      "gravidadeHumanos": null,
+      "sintomas": null,
+      "fonte": null,
+      "confianca": null
+    },
+    "problemas": "Raiz e caule podres por excesso de água ou terra que não drena. Pulgão, ácaro e cochonilha.",
+    "dica": "Menos água do que você imagina, e o máximo de sol.",
+    "estacoes": [
+      {
+        "estacao": "crescimento",
+        "meses": "set-mar",
+        "rega": "Na primavera e no verão, regar quando a terra secar. No inverno, quase seco: rega leve a cada poucas semanas. Nunca deixar água parada no prato.",
+        "verificarTerraDias": 14,
+        "verificarConfianca": "C",
+        "verificarFonte": "C2: no inverno rega leve a cada poucas semanas",
+        "adubacao": "Adubo com pouco nitrogênio (ex.: 5-10-5) 1 vez por mês no verão (C2), ou 1 a 2 vezes por ano a meia dose (U1). Não adubar no inverno.",
+        "adubacaoFonte": "C2; U1"
+      },
+      {
+        "estacao": "repouso",
+        "meses": "abr-ago",
+        "rega": "Na primavera e no verão, regar quando a terra secar. No inverno, quase seco: rega leve a cada poucas semanas. Nunca deixar água parada no prato.",
+        "verificarTerraDias": 21,
+        "verificarConfianca": "A",
+        "verificarFonte": "C2: no inverno rega leve a cada poucas semanas",
+        "adubacao": "Não adubar.",
+        "adubacaoFonte": "C2; U1"
+      }
+    ]
+  }
+];
+
 export const REFERENCIAS: readonly { id: string; citacao: string; url: string }[] = [
   {
     "id": "R1",
@@ -1388,5 +2374,95 @@ export const REFERENCIAS: readonly { id: string; citacao: string; url: string }[
     "id": "R7",
     "citacao": "BRASIL. Ministério da Agricultura, Pecuária e Abastecimento. Regras para análise de sementes. Brasília: MAPA/ACS, 2009. 399 p.",
     "url": "https://www.gov.br/agricultura/pt-br/assuntos/insumos-agropecuarios/arquivos-publicacoes-insumos/2946_regras_analise__sementes.pdf"
+  },
+  {
+    "id": "N1",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Epipremnum aureum. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/epipremnum-aureum/common-name/devils-vine"
+  },
+  {
+    "id": "N2",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Nephrolepis exaltata. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/nephrolepis-exaltata/"
+  },
+  {
+    "id": "N3",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Dracaena trifasciata. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/dracaena-trifasciata/"
+  },
+  {
+    "id": "N4",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Zamioculcas zamiifolia. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/zamioculcas-zamiifolia/"
+  },
+  {
+    "id": "N5",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Dieffenbachia seguine. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/dieffenbachia-seguine/common-name/dieffenbachia/"
+  },
+  {
+    "id": "N6",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Spathiphyllum. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/spathiphyllum/"
+  },
+  {
+    "id": "N7",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Monstera deliciosa. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/monstera-deliciosa/"
+  },
+  {
+    "id": "N8",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Chlorophytum comosum. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/chlorophytum-comosum/"
+  },
+  {
+    "id": "N9",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Aloe vera. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/aloe-vera/"
+  },
+  {
+    "id": "N10",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Anthurium andraeanum. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/anthurium-andraeanum/"
+  },
+  {
+    "id": "N11",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Phalaenopsis. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/phalaenopsis/"
+  },
+  {
+    "id": "N12",
+    "citacao": "NC State Extension Gardener Plant Toolbox, NC State University. Ficha Echeveria. Acesso em 24 nov. 2026.",
+    "url": "https://plants.ces.ncsu.edu/plants/echeveria/"
+  },
+  {
+    "id": "C1",
+    "citacao": "Clemson Cooperative Extension, Home & Garden Information Center. How to grow pothos indoors. Acesso em 24 nov. 2026.",
+    "url": "https://hgic.clemson.edu/factsheet/how-to-grow-pothos-indoors-epipremnum-spp-care-cultivars-and-common-problems/"
+  },
+  {
+    "id": "C2",
+    "citacao": "RUSS, K.; PERTUIT, A.; SMITH, B. H. Indoor cacti. Clemson Cooperative Extension, HGIC 1502, rev. 2015.",
+    "url": "https://hgic.clemson.edu/factsheet/indoor-cacti/"
+  },
+  {
+    "id": "U1",
+    "citacao": "BROWN, D. L. Cacti and succulents. University of Minnesota Extension (revisado 2026).",
+    "url": "https://extension.umn.edu/houseplants/cacti-and-succulents"
+  },
+  {
+    "id": "I1",
+    "citacao": "STEIL, A. Growing succulents indoors. Iowa State University Extension, revisado dez. 2024.",
+    "url": "https://yardandgarden.extension.iastate.edu/how-to/growing-succulents-indoors"
+  },
+  {
+    "id": "A1",
+    "citacao": "ASPCA Animal Poison Control. Spider plant. Acesso em 24 nov. 2026.",
+    "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/spider-plant"
+  },
+  {
+    "id": "A2",
+    "citacao": "ASPCA Animal Poison Control. Boston fern. Acesso em 24 nov. 2026.",
+    "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/boston-fern"
   }
 ];

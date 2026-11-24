@@ -70,6 +70,7 @@ function Raiz() {
             <Stack.Screen name="(abas)" options={{ headerShown: false }} />
             <Stack.Screen name="entrar" options={{ title: 'Entrar', headerLeft: () => null, headerRight: () => null }} />
             <Stack.Screen name="planta/[id]" options={{ title: '' }} />
+            <Stack.Screen name="casa/[id]" options={{ title: '' }} />
             <Stack.Screen name="plantio/novo" options={{ title: 'Plantar' }} />
             <Stack.Screen name="plantio/[id]" options={{ title: '' }} />
             <Stack.Screen name="local/novo" options={{ title: 'Novo local' }} />
