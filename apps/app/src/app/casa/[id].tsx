@@ -9,10 +9,10 @@ import {
   toxicidadeAlta,
   type Confianca,
 } from '@cultivae/core';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Linking, View } from 'react-native';
 import { CasaViva } from '../../components/casa-viva';
-import { Aviso, Dado, Fato, Secao, Subtitulo, Tela, Texto, Titulo, fontes, useCores } from '../../components/ui';
+import { Aviso, Botao, Dado, Fato, Secao, Subtitulo, Tela, Texto, Titulo, fontes, useCores } from '../../components/ui';
 import { useHorta } from '../../lib/horta';
 
 const ESTACAO = { crescimento: 'Crescimento (set a mar)', repouso: 'Repouso (abr a ago)' } as const;
@@ -66,6 +66,13 @@ export default function FichaCasa() {
         />
         {p.crescimento ? <Fato rotulo="Crescimento" valor={maiuscula(p.crescimento)} /> : null}
       </View>
+
+      {dados?.casa && (
+        <Botao
+          titulo={dados.casa.plantas.some((m) => m.plantaId === p.id) ? 'Tenho outra dessa em casa' : 'Tenho essa em casa'}
+          onPress={() => router.push({ pathname: '/minha-casa/nova', params: { planta: p.id } })}
+        />
+      )}
 
       {alta && (
         <Aviso tipo="erro">

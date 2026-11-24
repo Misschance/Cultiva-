@@ -1,10 +1,15 @@
 import {
   buscarPrevisao,
   CATALOGO,
+  PLANTAS_DE_CASA,
+  conferenciasDoDia,
   hojeNoFuso,
+  regiaoDaCidade,
   tarefasDoDia,
   type DataISO,
   type Especie,
+  type PlantaDeCasa,
+  type SituacaoCasa,
   type PrevisaoDia,
   type Tarefa,
 } from '@cultivae/core';
@@ -14,6 +19,7 @@ import { agendarLembretes } from './lembretes';
 import { useSessao } from './sessao';
 
 export const ESPECIES: ReadonlyMap<string, Especie> = new Map(CATALOGO.map((e) => [e.id, e]));
+export const CASA: ReadonlyMap<string, PlantaDeCasa> = new Map(PLANTAS_DE_CASA.map((p) => [p.id, p]));
 
 interface EstadoHorta {
   dados: DadosHorta | null;
@@ -22,6 +28,8 @@ interface EstadoHorta {
   hoje: DataISO;
   previsaoHoje: PrevisaoDia | null;
   tarefas: Tarefa[];
+  /** Plantas de casa com a terra para conferir hoje. */
+  conferencias: SituacaoCasa[];
   locais: ReadonlyMap<string, LocalComNome>;
   plantios: ReadonlyMap<string, PlantioCompleto>;
   recarregar: () => Promise<void>;
@@ -92,7 +100,10 @@ export function ProvedorHorta({ children }: { children: ReactNode }) {
           hoje,
         })
       : [];
-    return { dados, carregando, erro, hoje, previsaoHoje, tarefas, locais, plantios, recarregar };
+    const conferencias = dados?.casa
+      ? conferenciasDoDia(dados.casa.plantas, CASA, dados.casa.registros, hoje, regiaoDaCidade(dados.perfil.cidade))
+      : [];
+    return { dados, carregando, erro, hoje, previsaoHoje, tarefas, conferencias, locais, plantios, recarregar };
   }, [dados, carregando, erro, hoje, previsaoHoje, recarregar]);
 
   // Reagenda os lembretes do celular sempre que a horta muda.

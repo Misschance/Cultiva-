@@ -17,3 +17,4 @@ export * from './calendario';
 export * from './epocas';
 export * from './colhido';
 export * from './casa';
+export * from './casa-agenda';
