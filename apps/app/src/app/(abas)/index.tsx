@@ -1,11 +1,12 @@
-import { CAUSAS_GERMINACAO, descreverTarefa, faseAposGerminacao, formatarData, tituloTarefa, type Tarefa } from '@cultivae/core';
+import { CAUSAS_GERMINACAO, descreverConferencia, descreverTarefa, faseAposGerminacao, formatarData, tituloTarefa, type Tarefa } from '@cultivae/core';
 import { Link, router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { BotaoTema } from '../../components/navegacao';
+import { CasaViva } from '../../components/casa-viva';
 import { DestaquePlanta } from '../../components/destaque';
 import { Aviso, Botao, Cartao, Carregando, Paragrafo, Subtitulo, Tela, Texto, Titulo, fontes, useCores } from '../../components/ui';
-import { confirmarFase, encerrarPlantio, registrarAcao, registrarAcoes } from '../../lib/dados';
+import { confirmarFase, encerrarPlantio, registrarAcao, registrarAcoes, registrarCuidadoCasa } from '../../lib/dados';
 import { ESPECIES, useHorta } from '../../lib/horta';
 import { resumirPlanta } from '../../lib/visual';
 
@@ -15,7 +16,7 @@ function saudacao(): string {
 }
 
 export default function Hoje() {
-  const { dados, carregando, erro, hoje, previsaoHoje, tarefas, locais, plantios, recarregar } = useHorta();
+  const { dados, carregando, erro, hoje, previsaoHoje, tarefas, conferencias, locais, plantios, recarregar } = useHorta();
   const c = useCores();
   const [ocupado, setOcupado] = useState<string | null>(null);
   const [falha, setFalha] = useState<string | null>(null);
@@ -55,7 +56,7 @@ export default function Hoje() {
     porLocal.set(localId, [...(porLocal.get(localId) ?? []), t]);
   }
 
-  const semPlantas = destaques.length === 0;
+  const semPlantas = destaques.length === 0 && !dados?.casa?.plantas.length;
   const atual = destaques.length ? destaques[Math.min(indice, destaques.length - 1)]! : null;
   const total = destaques.length;
   const nome = dados?.perfil.nome?.split(' ')[0];
@@ -99,8 +100,8 @@ export default function Hoje() {
           <Paragrafo suave>Escolha uma planta na aba Plantas e toque em "Plantar esta".</Paragrafo>
           <Botao titulo="Ver plantas" onPress={() => router.push('/plantas')} />
         </Cartao>
-      ) : tarefas.length === 0 ? (
-        <Aviso tipo="ok">Nada para fazer hoje. Sua horta está em dia.</Aviso>
+      ) : tarefas.length + conferencias.length === 0 ? (
+        <Aviso tipo="ok">Nada para fazer hoje. Suas plantas estão em dia.</Aviso>
       ) : (
         <Subtitulo>Para fazer hoje</Subtitulo>
       )}
@@ -175,6 +176,46 @@ export default function Hoje() {
           </View>
         );
       })}
+
+      {conferencias.length > 0 && (
+        <View style={{ gap: 8 }}>
+          <Texto style={{ fontSize: 15, fontWeight: '600', color: c.textoSuave }}>Dentro de casa</Texto>
+          {conferencias.map((s) => {
+            const chave = `casa-${s.minha.id}`;
+            return (
+              <Cartao key={chave}>
+                <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                  <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: c.superficie, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+                    <CasaViva plantaId={s.planta.id} nome={s.planta.nomePopular} tamanho={70} />
+                  </View>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Texto style={{ fontSize: 13, fontWeight: '600', color: s.atraso ? c.alerta : c.textoSuave }}>
+                      Conferir a terra{s.atraso ? ` · desde ${formatarData(s.proximaConferencia!)}` : ''}
+                    </Texto>
+                    <Link href={{ pathname: '/minha-casa/[id]', params: { id: s.minha.id } }}>
+                      <Texto style={{ fontSize: 17, fontWeight: '600' }}>{descreverConferencia(s)}</Texto>
+                    </Link>
+                  </View>
+                </View>
+                {s.estacao.rega && <Paragrafo suave>{s.estacao.rega}</Paragrafo>}
+                <View style={{ gap: 8, marginTop: 8 }}>
+                  <Botao
+                    titulo="Toquei: ainda úmida"
+                    variante="secundario"
+                    carregando={ocupado === `${chave}-conferir`}
+                    onPress={() => agir(`${chave}-conferir`, () => registrarCuidadoCasa(s.minha.id, 'conferir', hoje))}
+                  />
+                  <Botao
+                    titulo="Estava seca, reguei"
+                    carregando={ocupado === `${chave}-rega`}
+                    onPress={() => agir(`${chave}-rega`, () => registrarCuidadoCasa(s.minha.id, 'rega', hoje))}
+                  />
+                </View>
+              </Cartao>
+            );
+          })}
+        </View>
+      )}
     </Tela>
   );
 }

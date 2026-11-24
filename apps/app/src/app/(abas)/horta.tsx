@@ -1,14 +1,15 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
+import { CasaViva } from '../../components/casa-viva';
 import { PlantaViva } from '../../components/planta-viva';
 import { Aviso, BarraProgresso, Botao, Cartao, Carregando, Opcoes, Paragrafo, Subtitulo, Tela, Texto, Titulo, fontes, useCores } from '../../components/ui';
-import { ESPECIES, useHorta } from '../../lib/horta';
+import { CASA, ESPECIES, useHorta } from '../../lib/horta';
 import { NOME_TIPO_LOCAL } from '../../lib/rotulos';
 import { resumirPlanta } from '../../lib/visual';
 
 export default function MinhaHorta() {
-  const { dados, carregando, erro, hoje, tarefas, locais } = useHorta();
+  const { dados, carregando, erro, hoje, tarefas, conferencias, locais } = useHorta();
   const c = useCores();
   const [filtro, setFiltro] = useState<string>('todos');
   if (carregando && !dados) return <Carregando />;
@@ -85,6 +86,58 @@ export default function MinhaHorta() {
           );
         })}
       </View>
+
+      {dados.casa && (
+        <>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+            <Subtitulo>Plantas de casa</Subtitulo>
+            <Pressable onPress={() => router.push({ pathname: '/plantas', params: { aba: 'casa' } })} accessibilityRole="button" hitSlop={8}>
+              <Texto style={{ fontSize: 15, fontWeight: '600', color: c.verde }}>+ Adicionar</Texto>
+            </Pressable>
+          </View>
+          {dados.casa.plantas.length === 0 ? (
+            <Paragrafo suave>Jiboia, espada-de-são-jorge, suculentas: cadastre as plantas de dentro de casa para lembrar de tocar na terra.</Paragrafo>
+          ) : (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+              {dados.casa.plantas.map((m) => {
+                const planta = CASA.get(m.plantaId);
+                if (!planta) return null;
+                const nome = m.apelido ?? planta.nomePopular;
+                const devida = conferencias.some((s) => s.minha.id === m.id);
+                return (
+                  <Pressable
+                    key={m.id}
+                    onPress={() => router.push({ pathname: '/minha-casa/[id]', params: { id: m.id } })}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${nome}${devida ? ', tocar na terra hoje' : ''}`}
+                    style={({ pressed }) => ({
+                      flexGrow: 1,
+                      flexBasis: '30%',
+                      maxWidth: '50%',
+                      minWidth: 120,
+                      backgroundColor: c.cartao,
+                      borderWidth: 1,
+                      borderColor: c.borda,
+                      borderRadius: 20,
+                      padding: 10,
+                      gap: 4,
+                      transform: [{ scale: pressed ? 0.97 : 1 }],
+                    })}
+                  >
+                    <View style={{ height: 110, borderRadius: 14, backgroundColor: c.superficie, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                      <CasaViva plantaId={planta.id} nome={planta.nomePopular} tamanho={110} />
+                    </View>
+                    <Texto style={{ fontSize: 15, fontWeight: '600' }} numberOfLines={1}>{nome}</Texto>
+                    <Texto style={{ fontSize: 12, fontWeight: '600', color: devida ? c.alerta : c.verde }} numberOfLines={1}>
+                      {devida ? 'Tocar na terra' : m.comodo ?? 'Em dia'}
+                    </Texto>
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
+        </>
+      )}
 
       <Subtitulo>Seus locais</Subtitulo>
       {dados.locais.map((local) => (

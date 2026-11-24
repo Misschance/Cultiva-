@@ -31,7 +31,10 @@ export default function Plantas() {
   const [filtro, setFiltro] = useState<Filtro>('todas');
   const [grupo, setGrupo] = useState<'horta' | 'casa'>('horta');
   const [filtroCasa, setFiltroCasa] = useState<'todas' | 'pets' | 'pouca-luz' | 'sol'>('todas');
-  const { local: localParam } = useLocalSearchParams<{ local?: string }>();
+  const { local: localParam, aba } = useLocalSearchParams<{ local?: string; aba?: string }>();
+  useEffect(() => {
+    if (aba === 'casa') setGrupo('casa');
+  }, [aba]);
   const { dados, hoje } = useHorta();
   const locaisComSol = (dados?.locais ?? []).filter((l) => l.horasSol != null);
   const [localId, setLocalId] = useState<string>('nenhum');

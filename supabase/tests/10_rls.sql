@@ -119,6 +119,38 @@ do $$ begin
   assert (select public from storage.buckets where id = 'fotos') = false, 'bucket de fotos precisa ser privado';
 end $$;
 
+-- Plantas de casa: mesma regra de dono
+select pg_temp.como('00000000-0000-0000-0000-00000000000a');
+set role authenticated;
+insert into public.plantas_casa (id, planta_id, apelido, comodo, desde)
+  values ('40000000-0000-0000-0000-00000000000a', 'jiboia', 'Jiboia da sala', 'Sala', '2026-11-01');
+insert into public.cuidados_casa (planta_casa_id, tipo, data) values ('40000000-0000-0000-0000-00000000000a', 'conferir', '2026-11-08');
+select pg_temp.deve_falhar($$insert into public.plantas_casa (planta_id, usuario_id) values ('jiboia', '00000000-0000-0000-0000-00000000000b')$$,
+  'cadastrar planta de casa em nome de outro usuário');
+select pg_temp.deve_falhar($$insert into public.plantas_casa (planta_id) values ('../jiboia')$$,
+  'id de planta de casa fora do padrão');
+select pg_temp.deve_falhar($$insert into public.plantas_casa (planta_id, apelido) values ('jiboia', '   ')$$,
+  'apelido em branco');
+select pg_temp.deve_falhar($$insert into public.cuidados_casa (planta_casa_id, tipo, data) values ('40000000-0000-0000-0000-00000000000a', 'poda', '2026-11-08')$$,
+  'cuidado de casa desconhecido');
+reset role;
+
+select pg_temp.como('00000000-0000-0000-0000-00000000000b');
+set role authenticated;
+do $$ begin
+  assert (select count(*) from public.plantas_casa) = 0, 'Beto não deveria ver as plantas de casa da Ana';
+  assert (select count(*) from public.cuidados_casa) = 0, 'Beto não deveria ver os cuidados da Ana';
+end $$;
+update public.plantas_casa set ativa = false;
+delete from public.cuidados_casa;
+select pg_temp.deve_falhar($$insert into public.cuidados_casa (planta_casa_id, tipo, data) values ('40000000-0000-0000-0000-00000000000a', 'rega', '2026-11-09')$$,
+  'registrar cuidado na planta de casa de outro usuário');
+reset role;
+do $$ begin
+  assert (select ativa from public.plantas_casa where id = '40000000-0000-0000-0000-00000000000a'), 'update do Beto não deveria afetar a Ana';
+  assert (select count(*) from public.cuidados_casa) = 1, 'delete do Beto não deveria apagar os cuidados da Ana';
+end $$;
+
 -- Visitante sem login lê o catálogo e nada mais
 select pg_temp.como(null);
 set role anon;
@@ -129,6 +161,7 @@ select pg_temp.deve_falhar($$select count(*) from public.plantios$$, 'anônimo l
 select pg_temp.deve_falhar($$select count(*) from public.perfis$$, 'anônimo lendo perfis');
 select pg_temp.deve_falhar($$select count(*) from public.entradas_diario$$, 'anônimo lendo o diário');
 select pg_temp.deve_falhar($$select count(*) from storage.objects$$, 'anônimo listando fotos');
+select pg_temp.deve_falhar($$select count(*) from public.plantas_casa$$, 'anônimo lendo plantas de casa');
 reset role;
 
 \echo 'Todos os testes de RLS passaram.'

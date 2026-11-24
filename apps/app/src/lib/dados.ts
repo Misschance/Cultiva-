@@ -3,6 +3,9 @@ import {
   ehJpeg,
   uuidV4,
   type Colheita,
+  type CuidadoCasa,
+  type MinhaPlantaDeCasa,
+  type RegistroCasa,
   type ConfirmacaoFase,
   type DataISO,
   type EntradaDiario,
@@ -45,6 +48,13 @@ export interface DadosHorta {
   locais: LocalComNome[];
   plantios: PlantioCompleto[];
   registros: RegistroAcao[];
+  /** Plantas de casa. Null quando não deu para carregar (ex.: banco ainda sem a tabela). */
+  casa: DadosCasa | null;
+}
+
+export interface DadosCasa {
+  plantas: MinhaPlantaDeCasa[];
+  registros: RegistroCasa[];
 }
 
 function falhar(contexto: string, _erro?: unknown): never {
@@ -53,7 +63,7 @@ function falhar(contexto: string, _erro?: unknown): never {
 }
 
 export async function carregarHorta(usuarioId: string): Promise<DadosHorta> {
-  const [perfil, locais, plantios, confirmacoes, registros] = await Promise.all([
+  const [perfil, locais, plantios, confirmacoes, registros, casa] = await Promise.all([
     supabase.from('perfis').select('id, nome, cidade, lat, lon, fuso, horario_lembrete').maybeSingle(),
     supabase.from('locais').select('id, nome, tipo, interno, horas_sol, volume_litros, material').order('criado_em'),
     supabase
@@ -63,6 +73,7 @@ export async function carregarHorta(usuarioId: string): Promise<DadosHorta> {
       .order('data_plantio'),
     supabase.from('confirmacoes_fase').select('plantio_id, fase, data'),
     supabase.from('registros_acao').select('plantio_id, tipo, feito_em').order('feito_em', { ascending: false }).limit(2000),
+    carregarCasa(),
   ]);
   for (const r of [perfil, locais, plantios, confirmacoes, registros]) {
     if (r.error) falhar('Não foi possível carregar sua horta.', r.error);
@@ -109,7 +120,55 @@ export async function carregarHorta(usuarioId: string): Promise<DadosHorta> {
       confirmacoes: confirmacoesPorPlantio.get(pl.id) ?? [],
     })),
     registros: (registros.data ?? []).map((r) => ({ plantioId: r.plantio_id, tipo: r.tipo as TipoAcao, data: r.feito_em })),
+    casa,
   };
+}
+
+/** Plantas de casa e cuidados. Falha aqui não derruba a horta: a parte de casa só fica indisponível. */
+async function carregarCasa(): Promise<DadosCasa | null> {
+  const [plantas, cuidados] = await Promise.all([
+    supabase.from('plantas_casa').select('id, planta_id, apelido, comodo, desde').eq('ativa', true).order('criado_em'),
+    supabase.from('cuidados_casa').select('planta_casa_id, tipo, data').order('data', { ascending: false }).limit(2000),
+  ]);
+  if (plantas.error || cuidados.error) return null;
+  return {
+    plantas: (plantas.data ?? []).map((p) => ({ id: p.id, plantaId: p.planta_id, apelido: p.apelido, comodo: p.comodo, desde: p.desde })),
+    registros: (cuidados.data ?? []).map((c) => ({ plantaCasaId: c.planta_casa_id, tipo: c.tipo as CuidadoCasa, data: c.data })),
+  };
+}
+
+export const novaPlantaCasa = z.object({
+  plantaId: z.string().regex(/^[a-z0-9_]{1,40}$/),
+  apelido: z.string().trim().max(60, 'Use até 60 caracteres.').nullable(),
+  comodo: z.string().trim().max(40, 'Use até 40 caracteres.').nullable(),
+  desde: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida.'),
+});
+export type NovaPlantaCasa = z.infer<typeof novaPlantaCasa>;
+
+export async function criarPlantaCasa(dados: NovaPlantaCasa): Promise<string> {
+  const v = novaPlantaCasa.parse(dados);
+  const { data, error } = await supabase
+    .from('plantas_casa')
+    .insert({ planta_id: v.plantaId, apelido: v.apelido || null, comodo: v.comodo || null, desde: v.desde })
+    .select('id')
+    .single();
+  if (error || !data) falhar('Não foi possível salvar a planta.', error);
+  return data.id;
+}
+
+const cuidadoCasa = z.enum(['conferir', 'rega', 'adubo']);
+
+export async function registrarCuidadoCasa(plantaCasaId: string, tipo: CuidadoCasa, data: DataISO): Promise<void> {
+  if (!z.string().uuid().safeParse(plantaCasaId).success || !cuidadoCasa.safeParse(tipo).success) throw new Error('Registro inválido.');
+  const { error } = await supabase.from('cuidados_casa').insert({ planta_casa_id: plantaCasaId, tipo, data });
+  if (error) falhar('Não foi possível registrar.', error);
+}
+
+/** Tira a planta da lista sem apagar o histórico. */
+export async function removerPlantaCasa(plantaCasaId: string): Promise<void> {
+  if (!z.string().uuid().safeParse(plantaCasaId).success) throw new Error('Planta inválida.');
+  const { error } = await supabase.from('plantas_casa').update({ ativa: false }).eq('id', plantaCasaId);
+  if (error) falhar('Não foi possível remover a planta.', error);
 }
 
 async function criarPerfil(usuarioId: string) {

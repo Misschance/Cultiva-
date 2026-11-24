@@ -1,4 +1,15 @@
-import { CATALOGO, descreverTarefa, proximosDias, tarefasDoDia, type DataISO, type Especie } from '@cultivae/core';
+import {
+  CATALOGO,
+  PLANTAS_DE_CASA,
+  conferenciasDoDia,
+  descreverConferencia,
+  descreverTarefa,
+  proximosDias,
+  regiaoDaCidade,
+  tarefasDoDia,
+  type DataISO,
+  type Especie,
+} from '@cultivae/core';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import type { DadosHorta } from './dados';
@@ -10,6 +21,7 @@ import type { DadosHorta } from './dados';
 const DIAS = 7;
 const CANAL = 'tarefas-da-horta';
 const especies = new Map<string, Especie>(CATALOGO.map((e) => [e.id, e]));
+const casa = new Map(PLANTAS_DE_CASA.map((p) => [p.id, p]));
 
 export const lembretesDisponiveis = Platform.OS !== 'web';
 
@@ -54,22 +66,29 @@ export async function agendarLembretes(dados: DadosHorta, hoje: DataISO): Promis
 
   for (const dia of proximosDias(hoje, DIAS)) {
     const tarefas = tarefasDoDia({ plantios: dados.plantios, especies, locais, registros: dados.registros, hoje: dia });
-    if (tarefas.length === 0) continue;
+    const conferencias = dados.casa
+      ? conferenciasDoDia(dados.casa.plantas, casa, dados.casa.registros, dia, regiaoDaCidade(dados.perfil.cidade))
+      : [];
+    const total = tarefas.length + conferencias.length;
+    if (total === 0) continue;
 
     const [a, m, d] = dia.split('-').map(Number);
     const quando = new Date(a!, m! - 1, d!, hora ?? 8, minuto ?? 0); // horário local do aparelho
     if (quando.getTime() <= agora) continue;
 
-    const frases = tarefas.slice(0, 4).map((t) => {
-      const plantio = dados.plantios.find((p) => p.id === t.plantioId);
-      const especie = plantio ? especies.get(plantio.especieId) : undefined;
-      return especie ? descreverTarefa(t, especie, apelidos.get(t.plantioId)) : '';
-    });
-    const resto = tarefas.length - 4;
+    const frases = [
+      ...tarefas.map((t) => {
+        const plantio = dados.plantios.find((p) => p.id === t.plantioId);
+        const especie = plantio ? especies.get(plantio.especieId) : undefined;
+        return especie ? descreverTarefa(t, especie, apelidos.get(t.plantioId)) : '';
+      }),
+      ...conferencias.map(descreverConferencia),
+    ].slice(0, 4);
+    const resto = total - 4;
 
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: tarefas.length === 1 ? '1 tarefa na horta hoje' : `${tarefas.length} tarefas na horta hoje`,
+        title: total === 1 ? '1 cuidado com as plantas hoje' : `${total} cuidados com as plantas hoje`,
         // Sem dados pessoais além do nome das plantas.
         body: frases.filter(Boolean).join('\n') + (resto > 0 ? `\ne mais ${resto}` : ''),
       },
