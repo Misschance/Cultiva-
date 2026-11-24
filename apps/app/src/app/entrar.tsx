@@ -7,6 +7,16 @@ import { AVISO_CONFIRMAR_EMAIL, credenciais, ERRO_CADASTRO, ERRO_LOGIN } from '.
 
 type Modo = 'entrar' | 'criar';
 
+/**
+ * Para onde o link de confirmação do e-mail volta. Na web é a raiz do próprio site
+ * (/Cultiva-/ no GitHub Pages), deduzida do endereço desta tela. O endereço precisa estar
+ * na lista de Redirect URLs do Supabase; se não estiver, o Supabase usa o Site URL.
+ */
+function enderecoDeRetorno(): string | undefined {
+  if (typeof window === 'undefined' || !window.location?.href) return undefined;
+  return new URL('.', window.location.href).toString();
+}
+
 export default function Entrar() {
   const { sessao } = useSessao();
   const [modo, setModo] = useState<Modo>('entrar');
@@ -30,7 +40,11 @@ export default function Entrar() {
         const { error } = await supabase.auth.signInWithPassword({ email: dados.data.email, password: dados.data.senha });
         if (error) setMensagem({ tipo: 'erro', texto: ERRO_LOGIN });
       } else {
-        const { error } = await supabase.auth.signUp({ email: dados.data.email, password: dados.data.senha });
+        const { error } = await supabase.auth.signUp({
+          email: dados.data.email,
+          password: dados.data.senha,
+          options: { emailRedirectTo: enderecoDeRetorno() },
+        });
         // Mesmo aviso exista ou não a conta, para não revelar e-mails cadastrados (SEG-4).
         setMensagem(error && error.status !== 422 ? { tipo: 'erro', texto: ERRO_CADASTRO } : { tipo: 'aviso', texto: AVISO_CONFIRMAR_EMAIL });
       }
