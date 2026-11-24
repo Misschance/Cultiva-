@@ -327,6 +327,25 @@ export async function carregarDiario(plantioId: string): Promise<Diario> {
   };
 }
 
+/** Todas as colheitas da pessoa, inclusive de plantas já encerradas, com a espécie de cada plantio. */
+export async function carregarColhido(): Promise<{ colheitas: Colheita[]; especieDoPlantio: Map<string, string> }> {
+  const [colheitas, plantios] = await Promise.all([
+    supabase.from('colheitas').select('id, plantio_id, data, quantidade, unidade').order('data', { ascending: false }).limit(5000),
+    supabase.from('plantios').select('id, especie_id').limit(2000),
+  ]);
+  if (colheitas.error || plantios.error) falhar('Não foi possível carregar suas colheitas.');
+  return {
+    colheitas: (colheitas.data ?? []).map((c) => ({
+      id: c.id,
+      plantioId: c.plantio_id,
+      data: c.data,
+      quantidade: Number(c.quantidade),
+      unidade: c.unidade as UnidadeColheita,
+    })),
+    especieDoPlantio: new Map((plantios.data ?? []).map((p) => [p.id as string, p.especie_id as string])),
+  };
+}
+
 export const novaEntrada = z
   .object({
     texto: z.string().trim().max(2000, 'Use até 2.000 caracteres.'),
