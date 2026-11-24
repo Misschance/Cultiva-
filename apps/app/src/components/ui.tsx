@@ -13,16 +13,16 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
-import { familiaPorPeso, fontes, useCores, useEscuro, useForma, type Cores, type Forma } from './tema';
+import { familiaPorPeso, fontes, forma as f, useCores, useEscuro, type Cores } from './tema';
 
-export { ESTILOS, fontes, useCores, useEscuro, useEstilo, useForma, type Cores, type Estilo } from './tema';
+export { MODOS, fontes, useAparencia, useCores, useEscuro, type Cores, type Modo } from './tema';
 
-function criarEstilos(c: Cores, f: Forma) {
+function criarEstilos(c: Cores) {
   return StyleSheet.create({
     tela: { padding: 20, gap: 14, maxWidth: 720, width: '100%', alignSelf: 'center', paddingBottom: 48 },
-    fundo: { flex: 1, backgroundColor: f.manchas ? 'transparent' : c.fundo },
+    fundo: { flex: 1, backgroundColor: 'transparent' },
     centro: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: c.fundo },
-    titulo: { fontSize: f.tamanhoTitulo, lineHeight: Math.round(f.tamanhoTitulo * 1.12), fontFamily: f.fonteTitulo, color: c.texto, letterSpacing: f.fio ? -1 : -0.8 },
+    titulo: { fontSize: f.tamanhoTitulo, lineHeight: Math.round(f.tamanhoTitulo * 1.12), fontFamily: f.fonteTitulo, color: c.texto, letterSpacing: -0.8 },
     subtitulo: { fontSize: 13, fontFamily: fontes.forte, color: c.textoSuave, marginTop: 8, letterSpacing: 0.8, textTransform: 'uppercase' },
     paragrafo: { fontSize: 16, color: c.texto, lineHeight: 23 },
     grupo: { gap: 6 },
@@ -54,7 +54,10 @@ function criarEstilos(c: Cores, f: Forma) {
       padding: 16,
       gap: 6,
       backgroundColor: c.cartao,
-      ...(f.fio ? {} : { shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } }),
+      shadowColor: '#000',
+      shadowOpacity: 0.05,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 6 },
     },
     aviso: { borderRadius: f.raioCampo, padding: 14 },
   });
@@ -63,32 +66,27 @@ function criarEstilos(c: Cores, f: Forma) {
 /** Estilos do tema atual (claro ou escuro). */
 export function useEstilos() {
   const c = useCores();
-  const f = useForma();
-  return useMemo(() => criarEstilos(c, f), [c, f]);
+  return useMemo(() => criarEstilos(c), [c]);
 }
 
 /** Texto com a fonte e a cor do tema. O peso (fontWeight) escolhe a família da Inter. */
 export function Texto({ style, ...props }: TextProps) {
   const c = useCores();
-  const f = useForma();
   const plano = (StyleSheet.flatten(style) ?? {}) as TextStyle;
   const { fontWeight, fontFamily, ...resto } = plano;
-  // A fonte de título segue o estilo ativo (serifada no editorial).
-  const familia = fontFamily === fontes.titulo ? f.fonteTitulo : (fontFamily ?? familiaPorPeso(fontWeight));
+  const familia = fontFamily ?? familiaPorPeso(fontWeight);
   return <Text {...props} style={[{ color: c.texto, fontSize: 16 }, resto, { fontFamily: familia }]} />;
 }
 
 /** Tela rolável. `topo` reserva a área da barra de status nas abas, que não têm cabeçalho. */
 export function Tela({ children, topo }: { children: ReactNode; topo?: boolean }) {
   const e = useEstilos();
-  const f = useForma();
   const margem = useSafeAreaInsets();
   const rolagem = (
     <ScrollView style={e.fundo} contentContainerStyle={[e.tela, topo && { paddingTop: margem.top + 20 }]} keyboardShouldPersistTaps="handled">
       {children}
     </ScrollView>
   );
-  if (!f.manchas) return rolagem;
   return (
     <View style={{ flex: 1 }}>
       <Manchas />
@@ -97,7 +95,7 @@ export function Tela({ children, topo }: { children: ReactNode; topo?: boolean }
   );
 }
 
-/** Fundo do estilo vidro: manchas de cor desfocadas atrás dos cartões translúcidos. */
+/** Fundo do estilo Vidro: manchas de cor desfocadas atrás dos cartões translúcidos. */
 export function Manchas() {
   const c = useCores();
   const escuro = useEscuro();
@@ -304,7 +302,6 @@ export function Carregando() {
 /** Bloco de resumo: um rótulo pequeno e um valor em destaque. */
 export function Fato({ rotulo, valor, detalhe, alerta }: { rotulo: string; valor: string; detalhe?: string; alerta?: boolean }) {
   const c = useCores();
-  const f = useForma();
   return (
     <View style={{ flexGrow: 1, flexBasis: '45%', minWidth: 140, gap: 2, padding: 12, borderRadius: Math.min(18, f.raioCartao), backgroundColor: alerta ? c.fundoAlerta : c.superficie }}>
       <Text style={{ fontSize: 12, fontFamily: fontes.medio, color: alerta ? c.alerta : c.textoSuave }}>{rotulo}</Text>

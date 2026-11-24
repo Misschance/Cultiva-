@@ -2,6 +2,7 @@ import { CAUSAS_GERMINACAO, descreverTarefa, faseAposGerminacao, formatarData, t
 import { Link, router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { View } from 'react-native';
+import { BotaoTema } from '../../components/navegacao';
 import { DestaquePlanta } from '../../components/destaque';
 import { Aviso, Botao, Cartao, Carregando, Paragrafo, Subtitulo, Tela, Texto, Titulo, fontes, useCores } from '../../components/ui';
 import { confirmarFase, encerrarPlantio, registrarAcao, registrarAcoes } from '../../lib/dados';
@@ -61,14 +62,17 @@ export default function Hoje() {
 
   return (
     <Tela topo>
-      <View style={{ gap: 4 }}>
-        <Texto style={{ fontSize: 14, color: c.textoSuave }}>
-          {formatarData(hoje)}
-          {previsaoHoje
-            ? ` · ${previsaoHoje.chuvaMm.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mm de chuva, máx. ${Math.round(previsaoHoje.tempMaxC)} °C`
-            : ''}
-        </Texto>
-        <Titulo>{nome ? `${saudacao()}, ${nome}` : saudacao()}</Titulo>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+        <View style={{ gap: 4, flex: 1 }}>
+          <Texto style={{ fontSize: 14, color: c.textoSuave }}>
+            {formatarData(hoje)}
+            {previsaoHoje
+              ? ` · ${previsaoHoje.chuvaMm.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mm de chuva, máx. ${Math.round(previsaoHoje.tempMaxC)} °C`
+              : ''}
+          </Texto>
+          <Titulo>{nome ? `${saudacao()}, ${nome}` : saudacao()}</Titulo>
+        </View>
+        <BotaoTema tamanho={42} />
       </View>
       {erro && <Aviso tipo="erro">{erro}</Aviso>}
       {falha && <Aviso tipo="erro">{falha}</Aviso>}

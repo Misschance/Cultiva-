@@ -1,14 +1,14 @@
 import { BricolageGrotesque_600SemiBold } from '@expo-google-fonts/bricolage-grotesque';
-import { Fraunces_600SemiBold } from '@expo-google-fonts/fraunces';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
-import { BotaoMenu, BotaoVoltar } from '../components/navegacao';
+import { View } from 'react-native';
+import { BotaoMenu, BotaoTema, BotaoVoltar } from '../components/navegacao';
 import { fontes, useCores, useEscuro } from '../components/ui';
-import { ProvedorEstilo } from '../lib/estilo';
+import { ProvedorAparencia } from '../lib/aparencia';
 import { ProvedorHorta } from '../lib/horta';
 import { ProvedorSessao } from '../lib/sessao';
 
@@ -25,15 +25,15 @@ function useTemaNavegacao(): Theme {
 
 export default function Layout() {
   return (
-    <ProvedorEstilo>
+    <ProvedorAparencia>
       <Raiz />
-    </ProvedorEstilo>
+    </ProvedorAparencia>
   );
 }
 
 function Raiz() {
   // Fontes vão no pacote do app: nada é buscado em servidor de terceiros.
-  const [fontesProntas, falhaFontes] = useFonts({ BricolageGrotesque_600SemiBold, Fraunces_600SemiBold, Inter_400Regular, Inter_500Medium, Inter_600SemiBold });
+  const [fontesProntas, falhaFontes] = useFonts({ BricolageGrotesque_600SemiBold, Inter_400Regular, Inter_500Medium, Inter_600SemiBold });
   const tema = useTemaNavegacao();
   const c = useCores();
 
@@ -59,7 +59,12 @@ function Raiz() {
               animation: 'slide_from_right',
               // Voltar sempre aparece (mesmo sem histórico, como ao recarregar a página) e o Início leva ao menu.
               headerLeft: () => <BotaoVoltar />,
-              headerRight: () => <BotaoMenu />,
+              headerRight: () => (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <BotaoTema />
+                  <BotaoMenu />
+                </View>
+              ),
             }}
           >
             <Stack.Screen name="(abas)" options={{ headerShown: false }} />

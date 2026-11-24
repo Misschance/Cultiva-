@@ -2,70 +2,11 @@ import { createContext, useContext } from 'react';
 import { useColorScheme } from 'react-native';
 
 /**
- * Três estilos visuais em teste (ramo de design). Todos têm versão clara e escura
- * e as mesmas chaves, então as telas não precisam saber qual está ativo.
- * - doca: escuro profundo e lima, a linha da barra de abas.
- * - vidro: fundo em gradiente com cartões translúcidos, esmeralda.
- * - editorial: papel, tinta e terracota, tipografia serifada grande.
+ * Estilo Vidro (escolhido pelo Murilo em 24/11/2026): fundo com manchas de cor e
+ * cartões translúcidos, verde esmeralda. Claro e escuro com as mesmas chaves.
+ * A pessoa escolhe claro, escuro ou automático (segue o aparelho).
  */
-export type Estilo = 'doca' | 'vidro' | 'editorial';
-export const ESTILOS: { valor: Estilo; texto: string }[] = [
-  { valor: 'doca', texto: 'Doca' },
-  { valor: 'vidro', texto: 'Vidro' },
-  { valor: 'editorial', texto: 'Editorial' },
-];
-
-const DOCA_CLARO = {
-  fundo: '#EDF0E6',
-  cartao: '#FFFFFF',
-  superficie: '#E4E8DA',
-  trilho: '#DDE2D2',
-  borda: '#DDE2D2',
-  bordaCampo: '#9AA38F',
-  texto: '#111611',
-  textoSuave: '#59614F',
-  verde: '#111611',
-  verdeEscuro: '#3E5C0E',
-  verdeClaro: '#E1ECCB',
-  sobreVerde: '#D9F57A',
-  erro: '#A3261B',
-  alerta: '#6B4A00',
-  fundoAlerta: '#F6EBD3',
-  barraAlerta: '#C9A24B',
-  doca: '#111611',
-  docaTexto: '#A9B3A2',
-  docaAtivo: '#FFFFFF',
-  destaque: '#C9EC5F',
-  sobreDestaque: '#111611',
-};
-
-export type Cores = typeof DOCA_CLARO;
-
-const DOCA_ESCURO: Cores = {
-  fundo: '#0B0F0B',
-  cartao: '#151B15',
-  superficie: '#1D251C',
-  trilho: '#263024',
-  borda: '#222B21',
-  bordaCampo: '#4C5845',
-  texto: '#F1F4EC',
-  textoSuave: '#9EA898',
-  verde: '#C9EC5F',
-  verdeEscuro: '#D9F57A',
-  verdeClaro: '#1E2A19',
-  sobreVerde: '#111611',
-  erro: '#FF8A80',
-  alerta: '#F0C878',
-  fundoAlerta: '#3D3220',
-  barraAlerta: '#E0B060',
-  doca: '#1A211A',
-  docaTexto: '#9EA898',
-  docaAtivo: '#F1F4EC',
-  destaque: '#C9EC5F',
-  sobreDestaque: '#111611',
-};
-
-const VIDRO_CLARO: Cores = {
+const CLARO = {
   fundo: '#E8F3EE',
   cartao: 'rgba(255,255,255,0.66)',
   superficie: 'rgba(255,255,255,0.5)',
@@ -89,7 +30,9 @@ const VIDRO_CLARO: Cores = {
   sobreDestaque: '#FFFFFF',
 };
 
-const VIDRO_ESCURO: Cores = {
+export type Cores = typeof CLARO;
+
+const ESCURO: Cores = {
   fundo: '#08161A',
   cartao: 'rgba(255,255,255,0.07)',
   superficie: 'rgba(255,255,255,0.06)',
@@ -113,108 +56,45 @@ const VIDRO_ESCURO: Cores = {
   sobreDestaque: '#03241A',
 };
 
-const EDITORIAL_CLARO: Cores = {
-  fundo: '#F7F4EE',
-  cartao: '#F7F4EE',
-  superficie: '#EDE8DE',
-  trilho: '#E2DCCF',
-  borda: '#D9D2C3',
-  bordaCampo: '#8F877A',
-  texto: '#1A1814',
-  textoSuave: '#6B6459',
-  verde: '#1A1814',
-  verdeEscuro: '#B4472A',
-  verdeClaro: '#ECE5D8',
-  sobreVerde: '#F7F4EE',
-  erro: '#A3261B',
-  alerta: '#7A4A12',
-  fundoAlerta: '#F1E4CC',
-  barraAlerta: '#C98B2F',
-  doca: '#1A1814',
-  docaTexto: '#A39C90',
-  docaAtivo: '#F7F4EE',
-  destaque: '#D2603C',
-  sobreDestaque: '#FFFFFF',
+/** Forma do estilo: cantos, fonte e tamanho do título. */
+export const forma = {
+  raioCartao: 28,
+  raioCampo: 18,
+  fonteTitulo: 'BricolageGrotesque_600SemiBold',
+  tamanhoTitulo: 32,
 };
 
-const EDITORIAL_ESCURO: Cores = {
-  fundo: '#121110',
-  cartao: '#121110',
-  superficie: '#1C1A18',
-  trilho: '#2A2724',
-  borda: '#2E2B27',
-  bordaCampo: '#6B655C',
-  texto: '#F2EEE6',
-  textoSuave: '#A39C90',
-  verde: '#F2EEE6',
-  verdeEscuro: '#EE8A66',
-  verdeClaro: '#1E1C19',
-  sobreVerde: '#121110',
-  erro: '#FF8A80',
-  alerta: '#E9B66E',
-  fundoAlerta: '#33281A',
-  barraAlerta: '#D9A04A',
-  doca: '#F2EEE6',
-  docaTexto: '#6B6459',
-  docaAtivo: '#121110',
-  destaque: '#D2603C',
-  sobreDestaque: '#FFFFFF',
-};
+export type Modo = 'sistema' | 'claro' | 'escuro';
+export const MODOS: { valor: Modo; texto: string }[] = [
+  { valor: 'sistema', texto: 'Automático' },
+  { valor: 'claro', texto: 'Claro' },
+  { valor: 'escuro', texto: 'Escuro' },
+];
 
-const PALETAS: Record<Estilo, { claro: Cores; escuro: Cores }> = {
-  doca: { claro: DOCA_CLARO, escuro: DOCA_ESCURO },
-  vidro: { claro: VIDRO_CLARO, escuro: VIDRO_ESCURO },
-  editorial: { claro: EDITORIAL_CLARO, escuro: EDITORIAL_ESCURO },
-};
+export const ContextoAparencia = createContext<{ modo: Modo; setModo: (m: Modo) => void }>({ modo: 'sistema', setModo: () => undefined });
 
-/** Forma de cada estilo: cantos, peso do título e se o cartão tem preenchimento. */
-export interface Forma {
-  raioCartao: number;
-  raioCampo: number;
-  fonteTitulo: string;
-  tamanhoTitulo: number;
-  /** Fundo com manchas de cor (vidro). */
-  manchas: boolean;
-  /** Cartões só com fio, sem sombra (editorial). */
-  fio: boolean;
-}
-
-const FORMAS: Record<Estilo, Forma> = {
-  doca: { raioCartao: 26, raioCampo: 16, fonteTitulo: 'BricolageGrotesque_600SemiBold', tamanhoTitulo: 34, manchas: false, fio: false },
-  vidro: { raioCartao: 28, raioCampo: 18, fonteTitulo: 'BricolageGrotesque_600SemiBold', tamanhoTitulo: 32, manchas: true, fio: false },
-  editorial: { raioCartao: 6, raioCampo: 4, fonteTitulo: 'Fraunces_600SemiBold', tamanhoTitulo: 40, manchas: false, fio: true },
-};
-
-export const ContextoEstilo = createContext<{ estilo: Estilo; setEstilo: (e: Estilo) => void }>({ estilo: 'doca', setEstilo: () => undefined });
-
-export function useEstilo() {
-  return useContext(ContextoEstilo);
+export function useAparencia() {
+  return useContext(ContextoAparencia);
 }
 
 export function useEscuro(): boolean {
-  return useColorScheme() === 'dark';
+  const { modo } = useAparencia();
+  const sistema = useColorScheme();
+  return modo === 'sistema' ? sistema === 'dark' : modo === 'escuro';
 }
 
 export function useCores(): Cores {
-  const { estilo } = useEstilo();
-  const p = PALETAS[estilo];
-  return useEscuro() ? p.escuro : p.claro;
-}
-
-export function useForma(): Forma {
-  return FORMAS[useEstilo().estilo];
+  return useEscuro() ? ESCURO : CLARO;
 }
 
 /** Famílias carregadas no layout raiz (expo-font). */
 export const fontes = {
   titulo: 'BricolageGrotesque_600SemiBold',
-  serifa: 'Fraunces_600SemiBold',
   texto: 'Inter_400Regular',
   medio: 'Inter_500Medium',
   forte: 'Inter_600SemiBold',
 };
 
-/** Fonte customizada não combina com fontWeight no Android: o peso vira a família. */
 export function familiaPorPeso(peso: unknown): string {
   const n = Number(peso === 'bold' ? 700 : peso === 'normal' || peso == null ? 400 : peso);
   if (n >= 600) return fontes.forte;
