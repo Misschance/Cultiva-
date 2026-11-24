@@ -1,9 +1,18 @@
-import { CATALOGO } from '@cultivae/core';
-import { router } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { CATALOGO, avaliarLuz, type SituacaoLuz } from '@cultivae/core';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 import { Text } from 'react-native';
 import { Campo, Cartao, Opcoes, Paragrafo, Tela, Titulo, cores } from '../../components/ui';
+import { useHorta } from '../../lib/horta';
 import { NOME_GRUPO } from '../../lib/rotulos';
+
+const TEXTO_LUZ: Record<SituacaoLuz, string | null> = {
+  adequada: 'Tem o sol que pede',
+  'aceita-meia-sombra': 'Aceita meia-sombra',
+  'pouco-sol': 'Pouco sol para ela',
+  'sem-dado': null,
+};
+const PESO: Record<SituacaoLuz, number> = { adequada: 0, 'aceita-meia-sombra': 1, 'sem-dado': 2, 'pouco-sol': 3 };
 
 type Filtro = 'todas' | 'meia-sombra' | 'rapidas' | string;
 
@@ -17,6 +26,14 @@ const normalizar = (t: string) =>
 export default function Plantas() {
   const [busca, setBusca] = useState('');
   const [filtro, setFiltro] = useState<Filtro>('todas');
+  const { local: localParam } = useLocalSearchParams<{ local?: string }>();
+  const { dados } = useHorta();
+  const locaisComSol = (dados?.locais ?? []).filter((l) => l.horasSol != null);
+  const [localId, setLocalId] = useState<string>('nenhum');
+  useEffect(() => {
+    if (localParam) setLocalId(localParam);
+  }, [localParam]);
+  const local = locaisComSol.find((l) => l.id === localId);
 
   const grupos = [...new Set(CATALOGO.map((e) => e.grupo))];
   const lista = useMemo(() => {
@@ -27,8 +44,10 @@ export default function Plantas() {
       if (filtro === 'rapidas') return (e.colheitaInicioDias?.min ?? Infinity) <= 60;
       if (filtro !== 'todas') return e.grupo === filtro;
       return true;
-    }).sort((a, b) => a.nomePopular.localeCompare(b.nomePopular, 'pt-BR'));
-  }, [busca, filtro]);
+    })
+      .map((e) => ({ e, luz: local ? avaliarLuz(e, local).situacao : null }))
+      .sort((a, b) => (a.luz && b.luz ? PESO[a.luz] - PESO[b.luz] : 0) || a.e.nomePopular.localeCompare(b.e.nomePopular, 'pt-BR'));
+  }, [busca, filtro, local]);
 
   return (
     <Tela>
@@ -45,8 +64,16 @@ export default function Plantas() {
           ...grupos.map((g) => ({ valor: g, texto: NOME_GRUPO[g] ?? g })),
         ]}
       />
+      {locaisComSol.length > 0 && (
+        <Opcoes
+          rotulo="O que posso plantar em"
+          valor={local ? localId : 'nenhum'}
+          onChange={setLocalId}
+          opcoes={[{ valor: 'nenhum', texto: 'Qualquer lugar' }, ...locaisComSol.map((l) => ({ valor: l.id, texto: l.nome }))]}
+        />
+      )}
       {lista.length === 0 && <Paragrafo suave>Nenhuma planta encontrada.</Paragrafo>}
-      {lista.map((e) => (
+      {lista.map(({ e, luz }) => (
         <Cartao key={e.id} rotulo={e.nomePopular} onPress={() => router.push({ pathname: '/planta/[id]', params: { id: e.id } })}>
           <Text style={{ fontSize: 17, fontWeight: '600', color: cores.texto }}>{e.nomePopular}</Text>
           <Text style={{ fontSize: 14, fontStyle: 'italic', color: cores.textoSuave }}>{e.nomeCientifico}</Text>
@@ -54,6 +81,11 @@ export default function Plantas() {
             Luz: {e.localIdeal}
             {e.colheitaInicioDias ? ` · colheita a partir de ${e.colheitaInicioDias.min} dias` : ''}
           </Paragrafo>
+          {luz && TEXTO_LUZ[luz] && (
+            <Text style={{ fontSize: 14, color: luz === 'pouco-sol' ? cores.alerta : cores.verdeEscuro }}>
+              {TEXTO_LUZ[luz]} em {local?.nome}
+            </Text>
+          )}
         </Cartao>
       ))}
     </Tela>

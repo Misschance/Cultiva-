@@ -56,6 +56,16 @@ function confianca(valor: string | undefined): 'A' | 'B' | 'C' | null {
   return letra === 'A' || letra === 'B' || letra === 'C' ? letra : null;
 }
 
+/** Sinal de ponto de colheita (RF-4.4). Vazio na base vira null; com texto, exige fonte e confiança. */
+function pontoColheita(p: Record<string, string | undefined>, id: string) {
+  const t = p.ponto_colheita?.trim();
+  if (!t) return null;
+  const nivel = confianca(p.ponto_colheita_confianca);
+  const fonte = p.ponto_colheita_fonte?.trim();
+  if (!nivel || !fonte) throw new Error(`${id}.ponto_colheita sem fonte ou confiança`);
+  return { texto: t, fonte, confianca: nivel };
+}
+
 function texto(valor: string | undefined): string {
   return valor ?? '';
 }
@@ -117,6 +127,7 @@ const catalogo = plantas.map((p) => {
     luzHorasMin: numero(p.luz_horas_min, `${id}.luz_horas_min`),
     localIdeal: texto(p.local_ideal),
     dicaAcessivel: texto(p.dica_acessivel),
+    pontoColheita: pontoColheita(p, id),
     fases: fasesDaPlanta,
   };
 });

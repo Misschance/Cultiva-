@@ -137,6 +137,20 @@ export async function criarLocal(dados: NovoLocal): Promise<string> {
   return data.id;
 }
 
+export const edicaoLocal = z.object({
+  nome: novoLocal.shape.nome,
+  horasSol: novoLocal.shape.horasSol,
+});
+export type EdicaoLocal = z.infer<typeof edicaoLocal>;
+
+/** Muda nome e horas de sol de um local. O RLS só deixa alterar locais do próprio usuário. */
+export async function atualizarLocal(localId: string, dados: EdicaoLocal): Promise<void> {
+  const v = edicaoLocal.parse(dados);
+  if (!z.string().uuid().safeParse(localId).success) throw new Error('Local inválido.');
+  const { error } = await supabase.from('locais').update({ nome: v.nome, horas_sol: v.horasSol }).eq('id', localId);
+  if (error) falhar('Não foi possível salvar o local.', error);
+}
+
 export const novoPlantio = z.object({
   especieId: z.string().regex(/^[a-z0-9_]{1,40}$/),
   especieVersao: z.number().int().positive(),

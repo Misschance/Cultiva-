@@ -1,7 +1,8 @@
 import type { MaterialVaso, TipoLocal } from '@cultivae/core';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { Aviso, Botao, Campo, Opcoes, Paragrafo, Tela } from '../../components/ui';
+import { useCallback, useState } from 'react';
+import { PerguntaSol } from '../../components/sol';
+import { Aviso, Botao, Campo, Opcoes, Tela } from '../../components/ui';
 import { criarLocal, novoLocal } from '../../lib/dados';
 import { useHorta } from '../../lib/horta';
 import { NOME_MATERIAL, NOME_TIPO_LOCAL, opcoesDe } from '../../lib/rotulos';
@@ -17,7 +18,12 @@ export default function NovoLocal() {
   const [nome, setNome] = useState('');
   const [tipo, setTipo] = useState<TipoLocal>('vaso');
   const [interno, setInterno] = useState<'sim' | 'nao'>('nao');
-  const [horasSol, setHorasSol] = useState('');
+  const [horasSol, setHorasSol] = useState<number | null>(null);
+  const [solInvalido, setSolInvalido] = useState(false);
+  const aoMudarSol = useCallback((h: number | null, invalido: boolean) => {
+    setHorasSol(h);
+    setSolInvalido(invalido);
+  }, []);
   const [volume, setVolume] = useState('');
   const [material, setMaterial] = useState<MaterialVaso | null>('plastico');
   const [erro, setErro] = useState<string | null>(null);
@@ -26,11 +32,15 @@ export default function NovoLocal() {
 
   async function salvar() {
     setErro(null);
+    if (solInvalido) {
+      setErro('Confira o horário do sol.');
+      return;
+    }
     const dados = {
       nome,
       tipo,
       interno: interno === 'sim',
-      horasSol: numero(horasSol),
+      horasSol,
       volumeLitros: ehVaso ? numero(volume) : null,
       material: ehVaso ? material : null,
     };
@@ -65,15 +75,7 @@ export default function NovoLocal() {
           { valor: 'sim', texto: 'Sim, ou coberto' },
         ]}
       />
-      <Campo
-        rotulo="Quantas horas de sol direto por dia? (opcional)"
-        value={horasSol}
-        onChangeText={setHorasSol}
-        keyboardType="decimal-pad"
-        placeholder="Ex.: 4"
-        maxLength={4}
-      />
-      <Paragrafo suave>Observe num dia de sol: de que horas a que horas o sol bate direto no local.</Paragrafo>
+      <PerguntaSol onChange={aoMudarSol} />
       {ehVaso && (
         <>
           <Campo

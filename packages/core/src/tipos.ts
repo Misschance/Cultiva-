@@ -40,6 +40,8 @@ export interface Especie {
   luzHorasMin: number | null;
   localIdeal: string;
   dicaAcessivel: string;
+  /** Como saber que está no ponto de colher (RF-4.4); null quando a literatura lida não diz. */
+  pontoColheita: { texto: string; fonte: string; confianca: Confianca } | null;
   fases: FaseEspecie[];
 }
 
