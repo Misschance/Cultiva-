@@ -1,4 +1,20 @@
-import type { ConfirmacaoFase, DataISO, Local, MaterialVaso, Origem, Plantio, RegistroAcao, TipoAcao, TipoLocal } from '@cultivae/core';
+import {
+  caminhoDaFoto,
+  ehJpeg,
+  uuidV4,
+  type Colheita,
+  type ConfirmacaoFase,
+  type DataISO,
+  type EntradaDiario,
+  type Local,
+  type MaterialVaso,
+  type Origem,
+  type Plantio,
+  type RegistroAcao,
+  type TipoAcao,
+  type TipoLocal,
+  type UnidadeColheita,
+} from '@cultivae/core';
 import { z } from 'zod';
 import { supabase } from './supabase';
 
@@ -255,4 +271,127 @@ export async function carregarFicha(especieId: string): Promise<Ficha> {
   if (especie.error || !especie.data) falhar('Não foi possível abrir a ficha.', especie.error);
   if (epocas.error || referencias.error) falhar('Não foi possível abrir a ficha.');
   return { especie: especie.data, epocas: epocas.data ?? [], referencias: referencias.data ?? [] };
+}
+
+// --- Diário da horta (P6) ---------------------------------------------------------------
+
+export interface Diario {
+  entradas: EntradaDiario[];
+  colheitas: Colheita[];
+  /** URL assinada de cada foto, válida por 1 hora (SEG-11). */
+  urls: Record<string, string>;
+}
+
+const UMA_HORA = 3600;
+
+export async function carregarDiario(plantioId: string): Promise<Diario> {
+  const [entradas, colheitas] = await Promise.all([
+    supabase
+      .from('entradas_diario')
+      .select('id, plantio_id, data, texto, foto_caminho')
+      .eq('plantio_id', plantioId)
+      .order('data', { ascending: false })
+      .order('criado_em', { ascending: false })
+      .limit(500),
+    supabase
+      .from('colheitas')
+      .select('id, plantio_id, data, quantidade, unidade')
+      .eq('plantio_id', plantioId)
+      .order('data', { ascending: false })
+      .limit(500),
+  ]);
+  if (entradas.error || colheitas.error) falhar('Não foi possível abrir o diário.');
+  const lista: EntradaDiario[] = (entradas.data ?? []).map((e) => ({
+    id: e.id,
+    plantioId: e.plantio_id,
+    data: e.data,
+    texto: e.texto,
+    fotoCaminho: e.foto_caminho,
+  }));
+  const caminhos = lista.flatMap((e) => (e.fotoCaminho ? [e.fotoCaminho] : []));
+  const urls: Record<string, string> = {};
+  if (caminhos.length > 0) {
+    const { data, error } = await supabase.storage.from('fotos').createSignedUrls(caminhos, UMA_HORA);
+    if (!error) for (const u of data ?? []) if (u.path && u.signedUrl) urls[u.path] = u.signedUrl;
+  }
+  return {
+    entradas: lista,
+    colheitas: (colheitas.data ?? []).map((c) => ({
+      id: c.id,
+      plantioId: c.plantio_id,
+      data: c.data,
+      quantidade: Number(c.quantidade),
+      unidade: c.unidade as UnidadeColheita,
+    })),
+    urls,
+  };
+}
+
+export const novaEntrada = z
+  .object({
+    texto: z.string().trim().max(2000, 'Use até 2.000 caracteres.'),
+    temFoto: z.boolean(),
+  })
+  .refine((v) => v.texto.length > 0 || v.temFoto, { message: 'Escreva algo ou escolha uma foto.' });
+
+/**
+ * Cria uma anotação. A foto já chega redimensionada e sem EXIF (ver lib/fotos.ts);
+ * aqui ela é conferida pelos bytes, enviada para a pasta do usuário e só então ligada à anotação.
+ */
+export async function criarEntrada(
+  usuarioId: string,
+  plantioId: string,
+  data: DataISO,
+  texto: string,
+  foto: Uint8Array | null,
+): Promise<void> {
+  const v = novaEntrada.parse({ texto, temFoto: foto !== null });
+  let caminho: string | null = null;
+  if (foto) {
+    if (!ehJpeg(foto)) throw new Error('A foto precisa ser JPEG.');
+    if (foto.byteLength > 10 * 1024 * 1024) throw new Error('A foto passou de 10 MB.');
+    caminho = caminhoDaFoto(usuarioId, uuidV4(bytesAleatorios(16)));
+    const { error } = await supabase.storage.from('fotos').upload(caminho, foto, { contentType: 'image/jpeg', upsert: false });
+    if (error) falhar('Não foi possível enviar a foto.', error);
+  }
+  const { error } = await supabase
+    .from('entradas_diario')
+    .insert({ plantio_id: plantioId, data, texto: v.texto || null, foto_caminho: caminho });
+  if (error) {
+    // Não deixa foto órfã no bucket se a anotação não foi salva.
+    if (caminho) await supabase.storage.from('fotos').remove([caminho]);
+    falhar('Não foi possível salvar a anotação.', error);
+  }
+}
+
+export async function apagarEntrada(entrada: EntradaDiario): Promise<void> {
+  const { error } = await supabase.from('entradas_diario').delete().eq('id', entrada.id);
+  if (error) falhar('Não foi possível apagar a anotação.', error);
+  if (entrada.fotoCaminho) await supabase.storage.from('fotos').remove([entrada.fotoCaminho]);
+}
+
+export const novaColheita = z.object({
+  quantidade: z.number({ message: 'Informe a quantidade.' }).gt(0, 'A quantidade precisa ser maior que zero.').max(100000),
+  unidade: z.enum(['kg', 'g', 'macos', 'unidades']),
+});
+
+/** Registra a colheita com quantidade (RF-6.3) e a ação "colheita" que a agenda usa. */
+export async function registrarColheita(
+  plantioId: string,
+  data: DataISO,
+  quantidade: number,
+  unidade: UnidadeColheita,
+): Promise<void> {
+  const v = novaColheita.parse({ quantidade, unidade });
+  const { error } = await supabase.from('colheitas').insert({ plantio_id: plantioId, data, quantidade: v.quantidade, unidade: v.unidade });
+  if (error) falhar('Não foi possível registrar a colheita.', error);
+  await registrarAcao(plantioId, 'colheita', data);
+}
+
+function bytesAleatorios(n: number): Uint8Array {
+  const b = new Uint8Array(n);
+  if (typeof globalThis.crypto?.getRandomValues === 'function') return globalThis.crypto.getRandomValues(b);
+  // O nome do arquivo não é segredo (o bucket é privado); isto só evita colisões.
+  for (let i = 0; i < n; i++) b[i] = Math.floor(Math.random() * 256);
+  return b;
 }

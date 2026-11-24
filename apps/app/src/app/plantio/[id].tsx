@@ -5,13 +5,15 @@ import {
   germinacaoConfirmada,
   janelaColheita,
   janelaGerminacao,
+  NOME_UNIDADE,
   proximaRega,
+  type UnidadeColheita,
 } from '@cultivae/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
-import { Aviso, Botao, Cartao, Paragrafo, Subtitulo, Tela, Titulo, cores } from '../../components/ui';
-import { confirmarFase, encerrarPlantio, registrarAcao } from '../../lib/dados';
+import { Aviso, Botao, Campo, Cartao, Opcoes, Paragrafo, Subtitulo, Tela, Titulo, cores } from '../../components/ui';
+import { confirmarFase, encerrarPlantio, novaColheita, registrarAcao, registrarColheita } from '../../lib/dados';
 import { ESPECIES, useHorta } from '../../lib/horta';
 import { NOME_ORIGEM } from '../../lib/rotulos';
 
@@ -25,11 +27,16 @@ const NOME_ACAO: Record<string, string> = {
   colheita: 'Colheita',
 };
 
+const opcoesUnidade = (Object.keys(NOME_UNIDADE) as UnidadeColheita[]).map((u) => ({ valor: u, texto: NOME_UNIDADE[u] }));
+
 export default function DetalhePlantio() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { dados, plantios, locais, hoje, previsaoHoje, recarregar } = useHorta();
   const [ocupado, setOcupado] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [colhendo, setColhendo] = useState(false);
+  const [quantidade, setQuantidade] = useState('');
+  const [unidade, setUnidade] = useState<UnidadeColheita>('unidades');
 
   const plantio = id ? plantios.get(id) : undefined;
   const especie = plantio ? ESPECIES.get(plantio.especieId) : undefined;
@@ -134,7 +141,42 @@ export default function DetalhePlantio() {
       <Subtitulo>Registrar</Subtitulo>
       <View style={{ gap: 8 }}>
         <Botao titulo="Adubei hoje" variante="secundario" carregando={ocupado === 'adubacao'} onPress={() => agir('adubacao', () => registrarAcao(plantio.id, 'adubacao', hoje))} />
-        <Botao titulo="Colhi hoje" variante="secundario" carregando={ocupado === 'colheita'} onPress={() => agir('colheita', () => registrarAcao(plantio.id, 'colheita', hoje))} />
+        {colhendo ? (
+          <Cartao>
+            <Campo
+              rotulo="Quanto colheu hoje? (opcional)"
+              value={quantidade}
+              onChangeText={setQuantidade}
+              keyboardType="decimal-pad"
+              placeholder="Ex.: 3"
+              maxLength={8}
+            />
+            <Opcoes rotulo="Unidade" valor={unidade} onChange={setUnidade} opcoes={opcoesUnidade} />
+            <Botao
+              titulo="Registrar colheita"
+              carregando={ocupado === 'colheita'}
+              onPress={() =>
+                agir(
+                  'colheita',
+                  async () => {
+                    if (quantidade.trim() === '') return registrarAcao(plantio.id, 'colheita', hoje);
+                    const v = novaColheita.safeParse({ quantidade: Number(quantidade.replace(',', '.')), unidade });
+                    if (!v.success) throw new Error(v.error.issues[0]?.message ?? 'Confira a quantidade.');
+                    return registrarColheita(plantio.id, hoje, v.data.quantidade, v.data.unidade);
+                  },
+                  () => {
+                    setColhendo(false);
+                    setQuantidade('');
+                  },
+                )
+              }
+            />
+            <Botao titulo="Cancelar" variante="secundario" onPress={() => setColhendo(false)} />
+          </Cartao>
+        ) : (
+          <Botao titulo="Colhi hoje" variante="secundario" onPress={() => setColhendo(true)} />
+        )}
+        <Botao titulo="Diário e fotos" onPress={() => router.push({ pathname: '/diario/[id]', params: { id: plantio.id } })} />
       </View>
 
       <Subtitulo>Histórico</Subtitulo>
