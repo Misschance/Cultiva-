@@ -1,0 +1,76 @@
+planta_id,variedade,regiao,mes_inicio,mes_fim,recomendado,texto,fonte,confianca,observacao
+alface,inverno,Sul,2,10,sim,fev a out,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+alface,inverno,Sudeste,2,7,sim,fev a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun (verão: ago-fev)
+alface,inverno,Nordeste,3,9,sim,mar a set,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+alface,inverno,Centro-Oeste,3,9,sim,mar a set,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun (verão: ago-fev)
+alface,inverno,Norte,3,7,sim,mar a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+alface,verão,Sul,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+alface,verão,Sudeste,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun (verão: ago-fev)
+alface,verão,Nordeste,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+alface,verão,Centro-Oeste,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun (verão: ago-fev)
+alface,verão,Norte,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+rucula,,Sul,3,8,sim,mar a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+rucula,,Sudeste,3,8,sim,mar a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+rucula,,Nordeste,3,7,sim,mar a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+rucula,,Centro-Oeste,3,7,sim,mar a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+rucula,,Norte,,,não,não recomendada,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+couve,,Sul,2,7,sim,fev a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+couve,,Sudeste,2,7,sim,fev a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+couve,,Nordeste,4,8,sim,abr a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+couve,,Centro-Oeste,2,7,sim,fev a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+couve,,Norte,4,7,sim,abr a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+tomate,mesa,Sul,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+tomate,mesa,Sudeste,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+tomate,mesa,Nordeste,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+tomate,mesa,Centro-Oeste,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+tomate,mesa,Norte,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+pimenta,,Sul,9,2,sim,set a fev,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+pimenta,,Sudeste,8,3,sim,ago a mar,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): ago-fev
+pimenta,,Nordeste,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+pimenta,,Centro-Oeste,8,12,sim,ago a dez,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): ago-fev
+pimenta,,Norte,7,12,sim,jul a dez,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+cenoura,inverno,Sul,2,8,sim,fev a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+cenoura,inverno,Sudeste,3,7,sim,mar a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+cenoura,inverno,Nordeste,,,não,não recomendada,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+cenoura,inverno,Centro-Oeste,4,7,sim,abr a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+cenoura,inverno,Norte,,,não,não recomendada,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+cenoura,verão,Sul,11,1,sim,nov a jan,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+cenoura,verão,Sudeste,10,3,sim,out a mar,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+cenoura,verão,Nordeste,10,3,sim,out a mar,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+cenoura,verão,Centro-Oeste,10,3,sim,out a mar,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+cenoura,verão,Norte,10,3,sim,out a mar,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+rabanete,,Sul,3,8,sim,mar a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+rabanete,,Sudeste,3,8,sim,mar a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+rabanete,,Nordeste,3,7,sim,mar a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+rabanete,,Centro-Oeste,4,9,sim,abr a set,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+rabanete,,Norte,3,8,sim,mar a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+cebolinha,,Sul,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+cebolinha,,Sudeste,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+cebolinha,,Nordeste,3,7,sim,mar a jul,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+cebolinha,,Centro-Oeste,4,8,sim,abr a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+cebolinha,,Norte,4,10,sim,abr a out,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+salsa,,Sul,3,9,sim,mar a set,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+salsa,,Sudeste,3,9,sim,mar a set,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+salsa,,Nordeste,3,8,sim,mar a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+salsa,,Centro-Oeste,3,8,sim,mar a ago,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+salsa,,Norte,,,não,não recomendada,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+coentro,,Sul,9,1,sim,set a jan,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+coentro,,Sudeste,8,2,sim,ago a fev,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+coentro,,Nordeste,1,12,sim,ano todo,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+coentro,,Centro-Oeste,8,4,sim,ago a abr,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-jun
+coentro,,Norte,4,10,sim,abr a out,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+morango,,Sul,3,4,sim,mar a abr,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+morango,,Sudeste,3,4,sim,mar a abr,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-mai
+morango,,Nordeste,,,não,não recomendada,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+morango,,Centro-Oeste,2,3,sim,fev a mar,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,Conferência R1 (SE/CO): abr-mai
+morango,,Norte,,,não,não recomendada,R2 Tab.8,B - fonte Embrapa lida por resumo; conferir página,
+manjericao,,Sul,,,,sem dado,,C - não verificado; precisa de fonte,Sem fonte; pendente
+manjericao,,Sudeste,,,,sem dado,,C - não verificado; precisa de fonte,Sem fonte; pendente
+manjericao,,Nordeste,,,,sem dado,,C - não verificado; precisa de fonte,Sem fonte; pendente
+manjericao,,Centro-Oeste,,,,sem dado,,C - não verificado; precisa de fonte,Sem fonte; pendente
+manjericao,,Norte,,,,sem dado,,C - não verificado; precisa de fonte,Sem fonte; pendente
+hortela,,Sul,,,,sem dado,,C - não verificado; precisa de fonte,R6: hortelã no fim das chuvas (Rondônia)
+hortela,,Sudeste,,,,sem dado,,C - não verificado; precisa de fonte,R6: hortelã no fim das chuvas (Rondônia)
+hortela,,Nordeste,,,,sem dado,,C - não verificado; precisa de fonte,R6: hortelã no fim das chuvas (Rondônia)
+hortela,,Centro-Oeste,,,,sem dado,,C - não verificado; precisa de fonte,R6: hortelã no fim das chuvas (Rondônia)
+hortela,,Norte,,,,sem dado,,C - não verificado; precisa de fonte,R6: hortelã no fim das chuvas (Rondônia)
