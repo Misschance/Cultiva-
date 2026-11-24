@@ -5,6 +5,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme } from 'expo-
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
+import { BotaoMenu, BotaoVoltar } from '../components/navegacao';
 import { fontes, useCores, useEscuro } from '../components/ui';
 import { ProvedorHorta } from '../lib/horta';
 import { ProvedorSessao } from '../lib/sessao';
@@ -46,10 +47,13 @@ export default function Layout() {
               headerTitleStyle: { fontFamily: fontes.forte },
               contentStyle: { backgroundColor: c.fundo },
               animation: 'slide_from_right',
+              // Voltar sempre aparece (mesmo sem histórico, como ao recarregar a página) e o Início leva ao menu.
+              headerLeft: () => <BotaoVoltar />,
+              headerRight: () => <BotaoMenu />,
             }}
           >
             <Stack.Screen name="(abas)" options={{ headerShown: false }} />
-            <Stack.Screen name="entrar" options={{ title: 'Entrar' }} />
+            <Stack.Screen name="entrar" options={{ title: 'Entrar', headerLeft: () => null, headerRight: () => null }} />
             <Stack.Screen name="planta/[id]" options={{ title: '' }} />
             <Stack.Screen name="plantio/novo" options={{ title: 'Plantar' }} />
             <Stack.Screen name="plantio/[id]" options={{ title: '' }} />
