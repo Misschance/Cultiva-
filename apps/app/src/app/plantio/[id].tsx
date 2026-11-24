@@ -11,11 +11,13 @@ import {
 } from '@cultivae/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Text, View } from 'react-native';
-import { Aviso, Botao, Campo, Cartao, Opcoes, Paragrafo, Subtitulo, Tela, Titulo, cores } from '../../components/ui';
+import { View } from 'react-native';
+import { Aviso, Botao, Campo, Cartao, Opcoes, Paragrafo, Subtitulo, Tela, Titulo, Texto, useCores, Selo, BarraProgresso } from '../../components/ui';
 import { confirmarFase, encerrarPlantio, novaColheita, registrarAcao, registrarColheita } from '../../lib/dados';
 import { ESPECIES, useHorta } from '../../lib/horta';
 import { NOME_ORIGEM } from '../../lib/rotulos';
+import { resumirPlanta } from '../../lib/visual';
+import { PlantaViva } from '../../components/planta-viva';
 
 const NOME_ACAO: Record<string, string> = {
   rega: 'Rega',
@@ -30,8 +32,9 @@ const NOME_ACAO: Record<string, string> = {
 const opcoesUnidade = (Object.keys(NOME_UNIDADE) as UnidadeColheita[]).map((u) => ({ valor: u, texto: NOME_UNIDADE[u] }));
 
 export default function DetalhePlantio() {
+  const cores = useCores();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { dados, plantios, locais, hoje, previsaoHoje, recarregar } = useHorta();
+  const { dados, plantios, locais, hoje, previsaoHoje, tarefas, recarregar } = useHorta();
   const [ocupado, setOcupado] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [colhendo, setColhendo] = useState(false);
@@ -46,6 +49,7 @@ export default function DetalhePlantio() {
   }
 
   const fase = faseAtual(plantio, especie, hoje);
+  const resumo = resumirPlanta(plantio, especie, local, tarefas, hoje);
   const historico = (dados?.registros ?? []).filter((r) => r.plantioId === plantio.id);
   const ultimaRega = historico.find((r) => r.tipo === 'rega')?.data ?? null;
   const rega = proximaRega({
@@ -78,7 +82,23 @@ export default function DetalhePlantio() {
 
   return (
     <Tela>
-      <Titulo>{plantio.apelido || especie.nomePopular}</Titulo>
+      <View style={{ alignItems: 'center', borderRadius: 24, backgroundColor: cores.superficie, paddingTop: 12, overflow: 'hidden' }}>
+        <PlantaViva especieId={especie.id} nome={resumo.nome} estagio={resumo.visual.estagio} sede={resumo.sede} chao={resumo.chao} tamanho={220} />
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+        <View style={{ flexShrink: 1 }}>
+          <Titulo>{plantio.apelido || especie.nomePopular}</Titulo>
+        </View>
+        <Selo texto={resumo.selo.texto} alerta={resumo.selo.alerta} />
+      </View>
+      {resumo.visual.progresso !== null && (
+        <View style={{ gap: 6 }}>
+          <Texto style={{ fontSize: 13, color: cores.textoSuave }}>
+            Dia {resumo.visual.dia} · {Math.round(resumo.visual.progresso * 100)}% do caminho até a colheita
+          </Texto>
+          <BarraProgresso valor={resumo.visual.progresso} alerta={resumo.sede} rotulo="Caminho até a colheita" />
+        </View>
+      )}
       <Paragrafo suave>
         {especie.nomePopular} · {NOME_ORIGEM[plantio.origem]} · {local.nome} · plantada em {formatarData(plantio.dataPlantio)}
         {plantio.quantidade > 1 ? ` · ${plantio.quantidade} pés` : ''}
@@ -86,19 +106,19 @@ export default function DetalhePlantio() {
       {erro && <Aviso tipo="erro">{erro}</Aviso>}
 
       <Cartao>
-        <Text style={{ fontSize: 13, color: cores.textoSuave }}>Fase atual</Text>
-        <Text style={{ fontSize: 18, fontWeight: '600', color: cores.texto }}>{fase.nome}</Text>
+        <Texto style={{ fontSize: 13, color: cores.textoSuave }}>Fase atual</Texto>
+        <Texto style={{ fontSize: 18, fontWeight: '600', color: cores.texto }}>{fase.nome}</Texto>
         {fase.rega ? <Paragrafo>Rega: {fase.rega}</Paragrafo> : null}
         {fase.adubacao ? <Paragrafo>Adubação: {fase.adubacao}</Paragrafo> : null}
         {fase.intervencoes ? <Paragrafo>Cuidados: {fase.intervencoes}</Paragrafo> : null}
       </Cartao>
 
       <Cartao>
-        <Text style={{ fontSize: 13, color: cores.textoSuave }}>Próxima rega</Text>
-        <Text style={{ fontSize: 18, fontWeight: '600', color: rega.atrasada ? cores.erro : cores.texto }}>
+        <Texto style={{ fontSize: 13, color: cores.textoSuave }}>Próxima rega</Texto>
+        <Texto style={{ fontSize: 18, fontWeight: '600', color: rega.atrasada ? cores.erro : cores.texto }}>
           {rega.devidaEm === hoje ? 'Hoje' : formatarData(rega.devidaEm)}
           {rega.atrasada ? ' (atrasada)' : ''}
-        </Text>
+        </Texto>
         {rega.ajustes.map((a) => (
           <Paragrafo key={a} suave>
             {a}

@@ -1,6 +1,8 @@
 import { Redirect } from 'expo-router';
-import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { PlantaViva } from '../components/planta-viva';
+import { Texto, fontes, useCores, type Cores } from '../components/ui';
 import { useSessao } from '../lib/sessao';
 import { supabase, supabaseConfigurado } from '../lib/supabase';
 import { AVISO_CONFIRMAR_EMAIL, credenciais, ERRO_CADASTRO, ERRO_LOGIN } from '../lib/validacao';
@@ -19,6 +21,8 @@ function enderecoDeRetorno(): string | undefined {
 
 export default function Entrar() {
   const { sessao } = useSessao();
+  const c = useCores();
+  const estilos = useMemo(() => criarEstilos(c), [c]);
   const [modo, setModo] = useState<Modo>('entrar');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -58,15 +62,18 @@ export default function Entrar() {
 
   return (
     <View style={estilos.tela}>
-      <Text style={estilos.titulo} accessibilityRole="header">
+      <View style={{ alignItems: 'center' }}>
+        <PlantaViva especieId="alface" nome="Alface" estagio="colheita" tamanho={150} />
+      </View>
+      <Texto style={estilos.titulo} accessibilityRole="header">
         {modo === 'entrar' ? 'Entre na sua horta' : 'Crie sua conta'}
-      </Text>
+      </Texto>
 
       {!supabaseConfigurado && (
-        <Text style={estilos.erro}>O app ainda não está ligado a um servidor. Veja o README para configurar.</Text>
+        <Texto style={estilos.erro}>O app ainda não está ligado a um servidor. Veja o README para configurar.</Texto>
       )}
 
-      <Text style={estilos.rotulo} nativeID="rotulo-email">E-mail</Text>
+      <Texto style={estilos.rotulo} nativeID="rotulo-email">E-mail</Texto>
       <TextInput
         style={estilos.campo}
         value={email}
@@ -76,10 +83,11 @@ export default function Entrar() {
         keyboardType="email-address"
         textContentType="emailAddress"
         maxLength={254}
+        placeholderTextColor={c.textoSuave}
         accessibilityLabelledBy="rotulo-email"
       />
 
-      <Text style={estilos.rotulo} nativeID="rotulo-senha">Senha</Text>
+      <Texto style={estilos.rotulo} nativeID="rotulo-senha">Senha</Texto>
       <TextInput
         style={estilos.campo}
         value={senha}
@@ -92,13 +100,13 @@ export default function Entrar() {
       />
 
       {mensagem && (
-        <Text style={mensagem.tipo === 'erro' ? estilos.erro : estilos.aviso} accessibilityLiveRegion="polite">
+        <Texto style={mensagem.tipo === 'erro' ? estilos.erro : estilos.aviso} accessibilityLiveRegion="polite">
           {mensagem.texto}
-        </Text>
+        </Texto>
       )}
 
       <Pressable style={estilos.botao} onPress={enviar} disabled={enviando || !supabaseConfigurado} accessibilityRole="button">
-        {enviando ? <ActivityIndicator color="#fff" /> : <Text style={estilos.textoBotao}>{modo === 'entrar' ? 'Entrar' : 'Criar conta'}</Text>}
+        {enviando ? <ActivityIndicator color={c.sobreVerde} /> : <Texto style={estilos.textoBotao}>{modo === 'entrar' ? 'Entrar' : 'Criar conta'}</Texto>}
       </Pressable>
 
       <Pressable
@@ -109,21 +117,22 @@ export default function Entrar() {
         }}
         accessibilityRole="button"
       >
-        <Text style={estilos.textoLink}>{modo === 'entrar' ? 'Ainda não tenho conta' : 'Já tenho conta'}</Text>
+        <Texto style={estilos.textoLink}>{modo === 'entrar' ? 'Ainda não tenho conta' : 'Já tenho conta'}</Texto>
       </Pressable>
     </View>
   );
 }
 
-const estilos = StyleSheet.create({
-  tela: { flex: 1, padding: 24, gap: 8, maxWidth: 480, width: '100%', alignSelf: 'center' },
-  titulo: { fontSize: 24, fontWeight: '600', marginBottom: 16, color: '#1B5E20' },
-  rotulo: { fontSize: 16, marginTop: 8 },
-  campo: { minHeight: 48, borderWidth: 1, borderColor: '#9E9E9E', borderRadius: 8, paddingHorizontal: 12, fontSize: 16 },
-  botao: { minHeight: 48, marginTop: 16, borderRadius: 8, backgroundColor: '#2E7D32', alignItems: 'center', justifyContent: 'center' },
-  textoBotao: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  link: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
-  textoLink: { color: '#1B5E20', fontSize: 16, textDecorationLine: 'underline' },
-  erro: { color: '#B71C1C', fontSize: 15 },
-  aviso: { color: '#1B5E20', fontSize: 15 },
-});
+const criarEstilos = (c: Cores) =>
+  StyleSheet.create({
+    tela: { flex: 1, padding: 24, gap: 8, maxWidth: 480, width: '100%', alignSelf: 'center', justifyContent: 'center' },
+    titulo: { fontSize: 30, fontFamily: fontes.titulo, marginBottom: 16, color: c.texto, textAlign: 'center' },
+    rotulo: { fontSize: 15, marginTop: 8, fontWeight: '500' },
+      campo: { minHeight: 48, borderWidth: 1, borderColor: c.bordaCampo, borderRadius: 14, paddingHorizontal: 14, fontSize: 16, fontFamily: fontes.texto, color: c.texto, backgroundColor: c.cartao },
+    botao: { minHeight: 52, marginTop: 16, borderRadius: 26, backgroundColor: c.verde, alignItems: 'center', justifyContent: 'center' },
+    textoBotao: { color: c.sobreVerde, fontSize: 16, fontWeight: '600' },
+    link: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
+    textoLink: { color: c.verde, fontSize: 16, textDecorationLine: 'underline' },
+    erro: { color: c.erro, fontSize: 15 },
+    aviso: { color: c.verdeEscuro, fontSize: 15 },
+  });

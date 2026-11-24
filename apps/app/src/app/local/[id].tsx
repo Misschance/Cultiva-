@@ -1,14 +1,14 @@
 import { CATALOGO, avaliarLuz, especiesParaLocal, faseAtual, mensagemLuz } from '@cultivae/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Text } from 'react-native';
 import { PerguntaSol } from '../../components/sol';
-import { Aviso, Botao, Campo, Cartao, Paragrafo, Subtitulo, Tela, Titulo, cores } from '../../components/ui';
+import { Aviso, Botao, Campo, Cartao, Paragrafo, Subtitulo, Tela, Titulo, Texto, useCores } from '../../components/ui';
 import { atualizarLocal, edicaoLocal } from '../../lib/dados';
 import { ESPECIES, useHorta } from '../../lib/horta';
 import { NOME_TIPO_LOCAL } from '../../lib/rotulos';
 
 export default function DetalheLocal() {
+  const cores = useCores();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { dados, locais, hoje, recarregar } = useHorta();
   const local = id ? locais.get(id) : undefined;
@@ -74,10 +74,10 @@ export default function DetalheLocal() {
         </Cartao>
       ) : (
         <Cartao>
-          <Text style={{ fontSize: 13, color: cores.textoSuave }}>Sol direto</Text>
-          <Text style={{ fontSize: 18, fontWeight: '600', color: cores.texto }}>
+          <Texto style={{ fontSize: 13, color: cores.textoSuave }}>Sol direto</Texto>
+          <Texto style={{ fontSize: 18, fontWeight: '600', color: cores.texto }}>
             {local.horasSol != null ? `${String(local.horasSol).replace('.', ',')} h por dia` : 'Ainda não informado'}
-          </Text>
+          </Texto>
           <Botao titulo={local.horasSol != null ? 'Editar local' : 'Informar o sol'} variante="secundario" onPress={comecarEdicao} />
         </Cartao>
       )}
@@ -90,9 +90,9 @@ export default function DetalheLocal() {
         const aviso = mensagemLuz(especie, local.nome, avaliarLuz(especie, local));
         return (
           <Cartao key={p.id} rotulo={p.apelido || especie.nomePopular} onPress={() => router.push({ pathname: '/plantio/[id]', params: { id: p.id } })}>
-            <Text style={{ fontSize: 17, fontWeight: '600', color: cores.texto }}>{p.apelido || especie.nomePopular}</Text>
+            <Texto style={{ fontSize: 17, fontWeight: '600', color: cores.texto }}>{p.apelido || especie.nomePopular}</Texto>
             <Paragrafo suave>Fase: {faseAtual(p, especie, hoje).nome}</Paragrafo>
-            {aviso && <Text style={{ color: cores.alerta, fontSize: 14 }}>{aviso}</Text>}
+            {aviso && <Texto style={{ color: cores.alerta, fontSize: 14 }}>{aviso}</Texto>}
           </Cartao>
         );
       })}

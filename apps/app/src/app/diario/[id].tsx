@@ -1,8 +1,8 @@
 import { formatarData, linhaDoTempo, NOME_UNIDADE, totalColhido, type EntradaDiario, type ItemLinhaDoTempo } from '@cultivae/core';
 import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { Image, Platform, Pressable, Text, View } from 'react-native';
-import { Aviso, Botao, Campo, Cartao, Carregando, Opcoes, Paragrafo, Subtitulo, Tela, Titulo, cores } from '../../components/ui';
+import { Image, Platform, Pressable, View } from 'react-native';
+import { Aviso, Botao, Campo, Cartao, Carregando, Opcoes, Paragrafo, Subtitulo, Tela, Titulo, Texto, useCores } from '../../components/ui';
 import { apagarEntrada, carregarDiario, criarEntrada, type Diario } from '../../lib/dados';
 import { escolherFoto, type FotoPronta } from '../../lib/fotos';
 import { ESPECIES, useHorta } from '../../lib/horta';
@@ -21,6 +21,7 @@ const NOME_ACAO: Record<string, string> = {
 type Vista = 'linha' | 'galeria';
 
 export default function DiarioPlantio() {
+  const cores = useCores();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { sessao } = useSessao();
   const { dados, plantios, hoje } = useHorta();
@@ -138,7 +139,7 @@ export default function DiarioPlantio() {
                   style={{ width: '100%', aspectRatio: 1, borderRadius: 8, backgroundColor: cores.verdeClaro }}
                   accessibilityLabel={`Foto de ${formatarData(e.data)}`}
                 />
-                <Text style={{ fontSize: 13, color: cores.textoSuave }}>{formatarData(e.data)}</Text>
+                <Texto style={{ fontSize: 13, color: cores.textoSuave }}>{formatarData(e.data)}</Texto>
               </View>
             ))}
           </View>
@@ -180,13 +181,14 @@ function ItemDiario({
   apagando: boolean;
   onApagar: (e: EntradaDiario) => void;
 }) {
+  const cores = useCores();
   const [confirmar, setConfirmar] = useState(false);
-  const data = <Text style={{ fontSize: 13, color: cores.textoSuave }}>{formatarData(item.data)}</Text>;
+  const data = <Texto style={{ fontSize: 13, color: cores.textoSuave }}>{formatarData(item.data)}</Texto>;
   if (item.tipo === 'acao') {
     return (
       <View style={{ flexDirection: 'row', gap: 8, paddingVertical: 4 }}>
         {data}
-        <Text style={{ fontSize: 15, color: cores.texto }}>{NOME_ACAO[item.acao] ?? item.acao}</Text>
+        <Texto style={{ fontSize: 15, color: cores.texto }}>{NOME_ACAO[item.acao] ?? item.acao}</Texto>
       </View>
     );
   }
@@ -195,9 +197,9 @@ function ItemDiario({
     return (
       <View style={{ flexDirection: 'row', gap: 8, paddingVertical: 4 }}>
         {data}
-        <Text style={{ fontSize: 15, color: cores.verdeEscuro, fontWeight: '600' }}>
+        <Texto style={{ fontSize: 15, color: cores.verdeEscuro, fontWeight: '600' }}>
           Colheu {String(c.quantidade).replace('.', ',')} {NOME_UNIDADE[c.unidade]}
-        </Text>
+        </Texto>
       </View>
     );
   }
@@ -220,7 +222,7 @@ function ItemDiario({
         </View>
       ) : (
         <Pressable onPress={() => setConfirmar(true)} accessibilityRole="button" style={{ minHeight: 44, justifyContent: 'center' }}>
-          <Text style={{ color: cores.erro, fontSize: 14 }}>Apagar anotação</Text>
+          <Texto style={{ color: cores.erro, fontSize: 14 }}>Apagar anotação</Texto>
         </Pressable>
       )}
     </Cartao>

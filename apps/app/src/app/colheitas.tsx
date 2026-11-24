@@ -1,12 +1,13 @@
 import { calendarioColheitas, formatarData } from '@cultivae/core';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
-import { Text, View } from 'react-native';
-import { Cartao, Carregando, Paragrafo, Subtitulo, Tela, Titulo, cores } from '../components/ui';
+import { View } from 'react-native';
+import { Cartao, Carregando, Paragrafo, Subtitulo, Tela, Titulo, Texto, useCores } from '../components/ui';
 import { ESPECIES, useHorta } from '../lib/horta';
 
 /** Calendário de colheitas por semana (RF-4.5): quanto vai dar para colher e quando. */
 export default function Colheitas() {
+  const cores = useCores();
   const { dados, hoje } = useHorta();
   const semanas = useMemo(() => {
     if (!dados) return [];
@@ -45,9 +46,9 @@ export default function Colheitas() {
             if (!p || !especie) return null;
             return (
               <Cartao key={c.plantioId} rotulo={p.apelido || especie.nomePopular} onPress={() => router.push({ pathname: '/plantio/[id]', params: { id: p.id } })}>
-                <Text style={{ fontSize: 16, fontWeight: '600', color: cores.texto }}>
+                <Texto style={{ fontSize: 16, fontWeight: '600', color: cores.texto }}>
                   {p.apelido || especie.nomePopular} ({c.quantidade})
-                </Text>
+                </Texto>
                 <Paragrafo suave>
                   {c.abreNestaSemana ? 'A colheita pode começar nesta semana' : 'Ainda na janela de início da colheita'} · plantada em{' '}
                   {formatarData(p.dataPlantio)}
