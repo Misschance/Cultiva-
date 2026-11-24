@@ -12,16 +12,17 @@ import {
   type TextStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { familiaPorPeso, fontes, useCores, type Cores } from './tema';
+import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
+import { familiaPorPeso, fontes, forma as f, useCores, useEscuro, type Cores } from './tema';
 
-export { fontes, useCores, useEscuro, type Cores } from './tema';
+export { MODOS, fontes, useAparencia, useCores, useEscuro, type Cores, type Modo } from './tema';
 
 function criarEstilos(c: Cores) {
   return StyleSheet.create({
     tela: { padding: 20, gap: 14, maxWidth: 720, width: '100%', alignSelf: 'center', paddingBottom: 48 },
-    fundo: { flex: 1, backgroundColor: c.fundo },
+    fundo: { flex: 1, backgroundColor: 'transparent' },
     centro: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: c.fundo },
-    titulo: { fontSize: 30, lineHeight: 34, fontFamily: fontes.titulo, color: c.texto, letterSpacing: -0.5 },
+    titulo: { fontSize: f.tamanhoTitulo, lineHeight: Math.round(f.tamanhoTitulo * 1.12), fontFamily: f.fonteTitulo, color: c.texto, letterSpacing: -0.8 },
     subtitulo: { fontSize: 13, fontFamily: fontes.forte, color: c.textoSuave, marginTop: 8, letterSpacing: 0.8, textTransform: 'uppercase' },
     paragrafo: { fontSize: 16, color: c.texto, lineHeight: 23 },
     grupo: { gap: 6 },
@@ -30,7 +31,7 @@ function criarEstilos(c: Cores) {
       minHeight: 48,
       borderWidth: 1,
       borderColor: c.bordaCampo,
-      borderRadius: 14,
+      borderRadius: f.raioCampo,
       paddingHorizontal: 14,
       fontSize: 16,
       fontFamily: fontes.texto,
@@ -46,8 +47,19 @@ function criarEstilos(c: Cores) {
     chip: { minHeight: 44, paddingHorizontal: 16, borderRadius: 22, borderWidth: 1, borderColor: c.borda, backgroundColor: c.cartao, justifyContent: 'center' },
     chipAtivo: { backgroundColor: c.texto, borderColor: c.texto },
     textoChip: { fontSize: 15, fontFamily: fontes.medio, color: c.texto },
-    cartao: { borderWidth: 1, borderColor: c.borda, borderRadius: 20, padding: 16, gap: 6, backgroundColor: c.cartao },
-    aviso: { borderRadius: 14, padding: 14 },
+    cartao: {
+      borderWidth: 1,
+      borderColor: c.borda,
+      borderRadius: f.raioCartao,
+      padding: 16,
+      gap: 6,
+      backgroundColor: c.cartao,
+      shadowColor: '#000',
+      shadowOpacity: 0.05,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 6 },
+    },
+    aviso: { borderRadius: f.raioCampo, padding: 14 },
   });
 }
 
@@ -62,17 +74,49 @@ export function Texto({ style, ...props }: TextProps) {
   const c = useCores();
   const plano = (StyleSheet.flatten(style) ?? {}) as TextStyle;
   const { fontWeight, fontFamily, ...resto } = plano;
-  return <Text {...props} style={[{ color: c.texto, fontSize: 16 }, resto, { fontFamily: fontFamily ?? familiaPorPeso(fontWeight) }]} />;
+  const familia = fontFamily ?? familiaPorPeso(fontWeight);
+  return <Text {...props} style={[{ color: c.texto, fontSize: 16 }, resto, { fontFamily: familia }]} />;
 }
 
 /** Tela rolável. `topo` reserva a área da barra de status nas abas, que não têm cabeçalho. */
 export function Tela({ children, topo }: { children: ReactNode; topo?: boolean }) {
   const e = useEstilos();
   const margem = useSafeAreaInsets();
-  return (
+  const rolagem = (
     <ScrollView style={e.fundo} contentContainerStyle={[e.tela, topo && { paddingTop: margem.top + 20 }]} keyboardShouldPersistTaps="handled">
       {children}
     </ScrollView>
+  );
+  return (
+    <View style={{ flex: 1 }}>
+      <Manchas />
+      {rolagem}
+    </View>
+  );
+}
+
+/** Fundo do estilo Vidro: manchas de cor desfocadas atrás dos cartões translúcidos. */
+export function Manchas() {
+  const c = useCores();
+  const escuro = useEscuro();
+  const cores = escuro ? ['#1F7A5C', '#2B4D8F', '#7A3D6B'] : ['#9BE7C4', '#A9C8FF', '#FFD0B0'];
+  const op = escuro ? 0.55 : 0.85;
+  return (
+    <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: c.fundo }]}>
+      <Svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+        <Defs>
+          {cores.map((cor, i) => (
+            <RadialGradient key={i} id={`m${i}`} cx="50%" cy="50%" r="50%">
+              <Stop offset="0" stopColor={cor} stopOpacity={op} />
+              <Stop offset="1" stopColor={cor} stopOpacity={0} />
+            </RadialGradient>
+          ))}
+        </Defs>
+        <Rect x={-30} y={-20} width={90} height={60} fill="url(#m0)" />
+        <Rect x={45} y={10} width={80} height={55} fill="url(#m1)" />
+        <Rect x={-10} y={55} width={90} height={60} fill="url(#m2)" />
+      </Svg>
+    </View>
   );
 }
 
@@ -259,9 +303,9 @@ export function Carregando() {
 export function Fato({ rotulo, valor, detalhe, alerta }: { rotulo: string; valor: string; detalhe?: string; alerta?: boolean }) {
   const c = useCores();
   return (
-    <View style={{ flexGrow: 1, flexBasis: '45%', minWidth: 140, gap: 2, padding: 12, borderRadius: 16, backgroundColor: alerta ? c.fundoAlerta : c.superficie }}>
+    <View style={{ flexGrow: 1, flexBasis: '45%', minWidth: 140, gap: 2, padding: 12, borderRadius: Math.min(18, f.raioCartao), backgroundColor: alerta ? c.fundoAlerta : c.superficie }}>
       <Text style={{ fontSize: 12, fontFamily: fontes.medio, color: alerta ? c.alerta : c.textoSuave }}>{rotulo}</Text>
-      <Text style={{ fontSize: 19, fontFamily: fontes.titulo, color: alerta ? c.alerta : c.texto }}>{valor}</Text>
+      <Texto style={{ fontSize: 19, fontFamily: fontes.titulo, color: alerta ? c.alerta : c.texto }}>{valor}</Texto>
       {detalhe ? <Text style={{ fontSize: 13, fontFamily: fontes.texto, color: alerta ? c.alerta : c.textoSuave }}>{detalhe}</Text> : null}
     </View>
   );

@@ -1,60 +1,86 @@
+import { createContext, useContext } from 'react';
 import { useColorScheme } from 'react-native';
 
-/** Paleta clara: papel, terra e um verde só para ação. */
-export const CLARO = {
-  fundo: '#F5F2EA',
-  cartao: '#FFFDF8',
-  superficie: '#F0ECE1',
-  trilho: '#E9E4D8',
-  borda: '#E2DDD0',
-  bordaCampo: '#A8A293',
-  texto: '#1D261E',
-  textoSuave: '#5B6259',
-  verde: '#2E5E3A',
-  verdeEscuro: '#1F4229',
-  verdeClaro: '#E3EBDD',
+/**
+ * Estilo Vidro (escolhido pelo Murilo em 24/11/2026): fundo com manchas de cor e
+ * cartões translúcidos, verde esmeralda. Claro e escuro com as mesmas chaves.
+ * A pessoa escolhe claro, escuro ou automático (segue o aparelho).
+ */
+const CLARO = {
+  fundo: '#E8F3EE',
+  cartao: 'rgba(255,255,255,0.66)',
+  superficie: 'rgba(255,255,255,0.5)',
+  trilho: 'rgba(16,64,46,0.10)',
+  borda: 'rgba(255,255,255,0.9)',
+  bordaCampo: 'rgba(16,64,46,0.28)',
+  texto: '#0E2A21',
+  textoSuave: '#4D6B60',
+  verde: '#14825A',
+  verdeEscuro: '#0D5C3F',
+  verdeClaro: 'rgba(20,130,90,0.12)',
   sobreVerde: '#FFFFFF',
-  erro: '#A3261B',
-  alerta: '#6B4A00',
-  fundoAlerta: '#F6EBD3',
-  barraAlerta: '#C9A24B',
-  // Barra de abas: doca escura com destaque lima na aba ativa.
-  doca: '#1D261E',
-  docaTexto: '#AEB8AA',
-  docaAtivo: '#FFFFFF',
-  destaque: '#C6E86B',
-  sobreDestaque: '#18210F',
-};
-
-/** Paleta escura: mesmas funções, contraste AA sobre fundo de folha à noite. */
-export const ESCURO: typeof CLARO = {
-  fundo: '#141A15',
-  cartao: '#1E261F',
-  superficie: '#252E26',
-  trilho: '#2E382F',
-  borda: '#2E382F',
-  bordaCampo: '#56614F',
-  texto: '#EEF1EA',
-  textoSuave: '#A3AC9F',
-  verde: '#8CC596',
-  verdeEscuro: '#CFE8D2',
-  verdeClaro: '#2C4A33',
-  sobreVerde: '#10200F',
-  erro: '#FF8A80',
-  alerta: '#F0C878',
-  fundoAlerta: '#3D3220',
-  barraAlerta: '#E0B060',
-  doca: '#263027',
-  docaTexto: '#A3AC9F',
-  docaAtivo: '#EEF1EA',
-  destaque: '#C6E86B',
-  sobreDestaque: '#18210F',
+  erro: '#B42318',
+  alerta: '#7A4D00',
+  fundoAlerta: 'rgba(250,200,110,0.30)',
+  barraAlerta: '#E3A33B',
+  doca: 'rgba(255,255,255,0.78)',
+  docaTexto: '#557367',
+  docaAtivo: '#0E2A21',
+  destaque: '#14825A',
+  sobreDestaque: '#FFFFFF',
 };
 
 export type Cores = typeof CLARO;
 
+const ESCURO: Cores = {
+  fundo: '#08161A',
+  cartao: 'rgba(255,255,255,0.07)',
+  superficie: 'rgba(255,255,255,0.06)',
+  trilho: 'rgba(255,255,255,0.10)',
+  borda: 'rgba(255,255,255,0.12)',
+  bordaCampo: 'rgba(255,255,255,0.25)',
+  texto: '#EAF6F1',
+  textoSuave: '#93B2A7',
+  verde: '#45D99A',
+  verdeEscuro: '#8EF0C4',
+  verdeClaro: 'rgba(69,217,154,0.12)',
+  sobreVerde: '#03241A',
+  erro: '#FF8A80',
+  alerta: '#F6C86E',
+  fundoAlerta: 'rgba(246,200,110,0.14)',
+  barraAlerta: '#F0B44C',
+  doca: 'rgba(14,34,36,0.88)',
+  docaTexto: '#93B2A7',
+  docaAtivo: '#EAF6F1',
+  destaque: '#45D99A',
+  sobreDestaque: '#03241A',
+};
+
+/** Forma do estilo: cantos, fonte e tamanho do título. */
+export const forma = {
+  raioCartao: 28,
+  raioCampo: 18,
+  fonteTitulo: 'BricolageGrotesque_600SemiBold',
+  tamanhoTitulo: 32,
+};
+
+export type Modo = 'sistema' | 'claro' | 'escuro';
+export const MODOS: { valor: Modo; texto: string }[] = [
+  { valor: 'sistema', texto: 'Automático' },
+  { valor: 'claro', texto: 'Claro' },
+  { valor: 'escuro', texto: 'Escuro' },
+];
+
+export const ContextoAparencia = createContext<{ modo: Modo; setModo: (m: Modo) => void }>({ modo: 'sistema', setModo: () => undefined });
+
+export function useAparencia() {
+  return useContext(ContextoAparencia);
+}
+
 export function useEscuro(): boolean {
-  return useColorScheme() === 'dark';
+  const { modo } = useAparencia();
+  const sistema = useColorScheme();
+  return modo === 'sistema' ? sistema === 'dark' : modo === 'escuro';
 }
 
 export function useCores(): Cores {
@@ -69,7 +95,6 @@ export const fontes = {
   forte: 'Inter_600SemiBold',
 };
 
-/** Fonte customizada não combina com fontWeight no Android: o peso vira a família. */
 export function familiaPorPeso(peso: unknown): string {
   const n = Number(peso === 'bold' ? 700 : peso === 'normal' || peso == null ? 400 : peso);
   if (n >= 600) return fontes.forte;

@@ -1,6 +1,6 @@
 import { buscarCidade, confirmaExclusao, PALAVRA_EXCLUSAO, type Cidade } from '@cultivae/core';
 import { useEffect, useState } from 'react';
-import { Aviso, Botao, Campo, Cartao, Paragrafo, Subtitulo, Tela, Titulo } from '../../components/ui';
+import { Aviso, Botao, Campo, Cartao, MODOS, Opcoes, Paragrafo, Subtitulo, Tela, Titulo, useAparencia } from '../../components/ui';
 import { excluirConta, removerLocalizacao, salvarHorarioLembrete, salvarLocalizacao } from '../../lib/dados';
 import { useHorta } from '../../lib/horta';
 import { agendarLembretes, cancelarLembretes, lembretesDisponiveis, lembretesPermitidos, pedirPermissaoLembretes } from '../../lib/lembretes';
@@ -8,6 +8,7 @@ import { useSessao } from '../../lib/sessao';
 import { supabase } from '../../lib/supabase';
 
 export default function Conta() {
+  const { modo, setModo } = useAparencia();
   const { sessao } = useSessao();
   const { dados, hoje, recarregar } = useHorta();
   const perfil = dados?.perfil;
@@ -46,6 +47,7 @@ export default function Conta() {
   return (
     <Tela topo>
       <Titulo>Conta</Titulo>
+      <Opcoes rotulo="Aparência" opcoes={MODOS} valor={modo} onChange={setModo} />
       <Paragrafo suave>Entrou como {sessao?.user.email}</Paragrafo>
       {msg && <Aviso tipo={msg.tipo === 'erro' ? 'erro' : 'ok'}>{msg.texto}</Aviso>}
 
