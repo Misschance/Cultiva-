@@ -50,7 +50,7 @@ export default function Plantas() {
   }, [busca, filtro, local]);
 
   return (
-    <Tela>
+    <Tela topo>
       <Titulo>Plantas</Titulo>
       <Campo rotulo="Buscar" value={busca} onChangeText={setBusca} placeholder="Ex.: alface, tomate" maxLength={60} autoCorrect={false} />
       <Opcoes
