@@ -19,6 +19,9 @@ export default function MinhaHorta() {
       <View style={{ gap: 8 }}>
         <Botao titulo="Plantar" onPress={() => router.push('/plantas')} />
         <Botao titulo="Novo local" variante="secundario" onPress={() => router.push('/local/novo')} />
+        {dados.plantios.length > 0 && (
+          <Botao titulo="Calendário de colheitas" variante="secundario" onPress={() => router.push('/colheitas')} />
+        )}
       </View>
 
       {dados.locais.length === 0 && (
@@ -29,13 +32,15 @@ export default function MinhaHorta() {
         const doLocal = dados.plantios.filter((p) => p.localId === local.id);
         return (
           <View key={local.id} style={{ gap: 8 }}>
-            <Subtitulo>{local.nome}</Subtitulo>
-            <Paragrafo suave>
-              {NOME_TIPO_LOCAL[local.tipo]}
-              {local.volumeLitros ? `, ${local.volumeLitros} L` : ''}
-              {local.interno ? ', dentro de casa' : ''}
-              {local.horasSol != null ? `, ${local.horasSol} h de sol` : ''}
-            </Paragrafo>
+            <Cartao rotulo={`Local ${local.nome}`} onPress={() => router.push({ pathname: '/local/[id]', params: { id: local.id } })}>
+              <Subtitulo>{local.nome}</Subtitulo>
+              <Paragrafo suave>
+                {NOME_TIPO_LOCAL[local.tipo]}
+                {local.volumeLitros ? `, ${local.volumeLitros} L` : ''}
+                {local.interno ? ', dentro de casa' : ''}
+                {local.horasSol != null ? `, ${String(local.horasSol).replace('.', ',')} h de sol` : ', sol não informado'}
+              </Paragrafo>
+            </Cartao>
             {doLocal.length === 0 && <Paragrafo suave>Nenhuma planta aqui ainda.</Paragrafo>}
             {doLocal.map((p) => {
               const especie = ESPECIES.get(p.especieId);

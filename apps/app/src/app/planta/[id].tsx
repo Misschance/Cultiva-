@@ -1,9 +1,10 @@
+import { avaliarLuz, mensagemLuz } from '@cultivae/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Linking, Text, View } from 'react-native';
 import { Aviso, Botao, Cartao, Carregando, Paragrafo, Subtitulo, Tela, Titulo, cores } from '../../components/ui';
 import { carregarFicha, type Ficha } from '../../lib/dados';
-import { ESPECIES } from '../../lib/horta';
+import { ESPECIES, useHorta } from '../../lib/horta';
 
 const CONFIANCA: Record<string, string> = {
   A: 'Conferido na fonte original',
@@ -30,6 +31,7 @@ function Item({ titulo, texto, confianca }: { titulo: string; texto: unknown; co
 export default function FichaPlanta() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const especie = id ? ESPECIES.get(id) : undefined;
+  const { dados } = useHorta();
   const [ficha, setFicha] = useState<Ficha | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -84,6 +86,22 @@ export default function FichaPlanta() {
         />
         <Item titulo="Clima" texto={e?.clima_temperatura} />
       </Cartao>
+
+      {(dados?.locais ?? []).some((l) => l.horasSol != null) && (
+        <>
+          <Subtitulo>Nos seus locais</Subtitulo>
+          {dados!.locais
+            .filter((l) => l.horasSol != null)
+            .map((l) => {
+              const a = avaliarLuz(especie, l);
+              return (
+                <Paragrafo key={l.id}>
+                  {a.situacao === 'adequada' ? `${l.nome}: tem o sol que ela pede (${String(l.horasSol).replace('.', ',')} h).` : mensagemLuz(especie, l.nome, a)}
+                </Paragrafo>
+              );
+            })}
+        </>
+      )}
 
       <Subtitulo>Fases</Subtitulo>
       {especie.fases.map((f) => (

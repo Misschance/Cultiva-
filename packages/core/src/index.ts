@@ -8,4 +8,6 @@ export * from './agenda';
 export * from './hoje';
 export * from './geocodificacao';
 export * from './textos';
+export * from './luz';
+export * from './planejamento';
 export { CATALOGO, REFERENCIAS } from './catalogo.gerado';

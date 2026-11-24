@@ -1,6 +1,6 @@
 import { maisRecente, paraDia, somarDias } from './datas';
 import { faseAtual, germinacaoConfirmada } from './fases';
-import { janelaColheita, janelaGerminacao } from './previsao';
+import { colheitaIncerta, janelaColheita, janelaGerminacao } from './previsao';
 import { proximaRega } from './rega';
 import type { DataISO, Especie, Local, Plantio, PrevisaoDia, RegistroAcao, Tarefa } from './tipos';
 
@@ -56,7 +56,7 @@ export function tarefasDoDia(e: EntradaAgenda): Tarefa[] {
     }
 
     // Se a janela de germinação passou sem confirmação, não há colheita a anunciar.
-    const colheita = aguardandoGerminacao && germ && hoje > paraDia(germ.fim) ? null : janelaColheita(plantio, especie);
+    const colheita = colheitaIncerta(plantio, especie, e.hoje) ? null : janelaColheita(plantio, especie);
     if (colheita) {
       const inicio = paraDia(colheita.inicio);
       if (hoje >= inicio && hoje <= paraDia(colheita.fim)) {

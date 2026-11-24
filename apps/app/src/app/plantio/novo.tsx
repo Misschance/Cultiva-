@@ -1,18 +1,10 @@
-import { formatarData, lerDataBr, paraDia, type Origem } from '@cultivae/core';
+import { avaliarLuz, formatarData, lerDataBr, locaisComSol, mensagemLuz, paraDia, type Origem } from '@cultivae/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Aviso, Botao, Campo, Opcoes, Paragrafo, Tela, Titulo } from '../../components/ui';
 import { criarPlantio, novoPlantio } from '../../lib/dados';
 import { ESPECIES, useHorta } from '../../lib/horta';
 import { NOME_ORIGEM, opcoesDe } from '../../lib/rotulos';
-
-/** Horas mínimas de sol que a ficha pede para "sol pleno" (RF-5.3, alerta simples). */
-function alertaLuz(localIdeal: string, horasSolLocal: number | null | undefined, luzMin: number | null): string | null {
-  if (horasSolLocal == null || luzMin == null) return null;
-  if (horasSolLocal >= luzMin) return null;
-  if (localIdeal.includes('meia-sombra')) return null;
-  return `Esta planta pede ${localIdeal} (pelo menos ${luzMin} h de sol), e este local recebe ${horasSolLocal} h. Ela pode crescer pouco.`;
-}
 
 export default function NovoPlantio() {
   const { especie: especieId } = useLocalSearchParams<{ especie: string }>();
@@ -31,7 +23,10 @@ export default function NovoPlantio() {
   // Sem escolha ainda: sugere o último local cadastrado (os dados podem chegar depois da tela abrir).
   const localId = localEscolhido ?? locais.at(-1)?.id ?? null;
   const local = locais.find((l) => l.id === localId);
-  const aviso = alertaLuz(especie.localIdeal, local?.horasSol, especie.luzHorasMin);
+  const avaliacao = local ? avaliarLuz(especie, local) : null;
+  const aviso = local && avaliacao ? mensagemLuz(especie, local.nome, avaliacao) : null;
+  // RF-5.3: se falta sol aqui, sugere os locais da pessoa onde a planta tem o sol que pede.
+  const melhores = aviso ? locaisComSol(especie, locais).filter((l) => l.id !== localId) : [];
 
   async function salvar() {
     setErro(null);
@@ -76,7 +71,23 @@ export default function NovoPlantio() {
             variante="secundario"
             onPress={() => router.push({ pathname: '/local/novo', params: { voltarPara: 'plantio' } })}
           />
-          {aviso && <Aviso>{aviso}</Aviso>}
+          {aviso && (
+            <Aviso>
+              {aviso}
+              {melhores.length > 0
+                ? ` Melhor: ${melhores
+                    .slice(0, 3)
+                    .map((l) => `${l.nome} (${String(l.horasSol).replace('.', ',')} h)`)
+                    .join(', ')}.`
+                : ''}
+            </Aviso>
+          )}
+          {melhores[0] && (
+            <Botao titulo={`Plantar em ${melhores[0].nome}`} variante="secundario" onPress={() => setLocalId(melhores[0]!.id)} />
+          )}
+          {local && local.horasSol == null && (
+            <Paragrafo suave>Informe as horas de sol de {local.nome} na tela do local para o app avisar se falta luz.</Paragrafo>
+          )}
           <Opcoes rotulo="Começou de" valor={origem} onChange={setOrigem} opcoes={opcoesDe(NOME_ORIGEM)} />
           <Campo rotulo="Data do plantio (dia/mês/ano)" value={data} onChangeText={setData} keyboardType="numbers-and-punctuation" maxLength={10} />
           <Campo rotulo="Quantidade de pés" value={quantidade} onChangeText={setQuantidade} keyboardType="number-pad" maxLength={5} />
