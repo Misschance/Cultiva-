@@ -24,6 +24,7 @@ export default function Abas() {
     >
       <Tabs.Screen name="index" options={{ title: 'Hoje' }} />
       <Tabs.Screen name="horta" options={{ title: 'Minha horta' }} />
+      <Tabs.Screen name="calendario" options={{ title: 'Calendário' }} />
       <Tabs.Screen name="plantas" options={{ title: 'Plantas' }} />
       <Tabs.Screen name="conta" options={{ title: 'Conta' }} />
     </Tabs>
