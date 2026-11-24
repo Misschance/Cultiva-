@@ -78,6 +78,47 @@ do $$ begin
   assert (select count(*) from public.locais) = 1, 'delete do Beto não deveria afetar a Ana';
 end $$;
 
+-- Diário, colheitas e fotos (fase 3): mesma regra de dono, e cada um só mexe na própria pasta de fotos
+select pg_temp.como('00000000-0000-0000-0000-00000000000a');
+set role authenticated;
+insert into storage.objects (bucket_id, name) values ('fotos', '00000000-0000-0000-0000-00000000000a/30000000-0000-0000-0000-00000000000a.jpg');
+insert into public.entradas_diario (plantio_id, data, texto, foto_caminho) values
+  ('20000000-0000-0000-0000-00000000000a', '2026-11-10', 'Primeiras folhas', '00000000-0000-0000-0000-00000000000a/30000000-0000-0000-0000-00000000000a.jpg');
+insert into public.colheitas (plantio_id, data, quantidade, unidade) values ('20000000-0000-0000-0000-00000000000a', '2026-12-30', 1.5, 'kg');
+select pg_temp.deve_falhar($$insert into storage.objects (bucket_id, name) values ('fotos', '00000000-0000-0000-0000-00000000000b/x.jpg')$$,
+  'enviar foto para a pasta de outro usuário');
+select pg_temp.deve_falhar($$insert into public.entradas_diario (plantio_id, data, foto_caminho) values ('20000000-0000-0000-0000-00000000000a', '2026-11-10', '00000000-0000-0000-0000-00000000000b/30000000-0000-0000-0000-00000000000b.jpg')$$,
+  'anotação apontando para foto de outro usuário');
+select pg_temp.deve_falhar($$insert into public.entradas_diario (plantio_id, data, texto) values ('20000000-0000-0000-0000-00000000000a', '2026-11-10', '   ')$$,
+  'anotação vazia');
+select pg_temp.deve_falhar($$insert into public.entradas_diario (plantio_id, data, foto_caminho) values ('20000000-0000-0000-0000-00000000000a', '2026-11-10', '../../etc/passwd')$$,
+  'caminho de foto fora do padrão');
+select pg_temp.deve_falhar($$insert into public.colheitas (plantio_id, data, quantidade, unidade) values ('20000000-0000-0000-0000-00000000000a', '2026-12-30', -2, 'kg')$$,
+  'colheita com quantidade negativa');
+select pg_temp.deve_falhar($$insert into public.colheitas (plantio_id, data, quantidade, unidade) values ('20000000-0000-0000-0000-00000000000a', '2026-12-30', 2, 'toneladas')$$,
+  'colheita com unidade desconhecida');
+reset role;
+
+select pg_temp.como('00000000-0000-0000-0000-00000000000b');
+set role authenticated;
+do $$ begin
+  assert (select count(*) from public.entradas_diario) = 0, 'Beto não deveria ver o diário da Ana';
+  assert (select count(*) from public.colheitas) = 0, 'Beto não deveria ver as colheitas da Ana';
+  assert (select count(*) from storage.objects) = 0, 'Beto não deveria ver as fotos da Ana';
+end $$;
+delete from storage.objects;
+delete from public.entradas_diario;
+select pg_temp.deve_falhar($$insert into public.entradas_diario (plantio_id, data, texto) values ('20000000-0000-0000-0000-00000000000a', '2026-11-10', 'invasão')$$,
+  'anotar no plantio de outro usuário');
+select pg_temp.deve_falhar($$insert into public.colheitas (plantio_id, data, quantidade, unidade) values ('20000000-0000-0000-0000-00000000000a', '2026-12-30', 1, 'kg')$$,
+  'registrar colheita no plantio de outro usuário');
+reset role;
+do $$ begin
+  assert (select count(*) from storage.objects) = 1, 'delete do Beto não deveria apagar a foto da Ana';
+  assert (select count(*) from public.entradas_diario) = 1, 'delete do Beto não deveria apagar o diário da Ana';
+  assert (select public from storage.buckets where id = 'fotos') = false, 'bucket de fotos precisa ser privado';
+end $$;
+
 -- Visitante sem login lê o catálogo e nada mais
 select pg_temp.como(null);
 set role anon;
@@ -86,6 +127,8 @@ do $$ begin
 end $$;
 select pg_temp.deve_falhar($$select count(*) from public.plantios$$, 'anônimo lendo plantios');
 select pg_temp.deve_falhar($$select count(*) from public.perfis$$, 'anônimo lendo perfis');
+select pg_temp.deve_falhar($$select count(*) from public.entradas_diario$$, 'anônimo lendo o diário');
+select pg_temp.deve_falhar($$select count(*) from storage.objects$$, 'anônimo listando fotos');
 reset role;
 
 \echo 'Todos os testes de RLS passaram.'

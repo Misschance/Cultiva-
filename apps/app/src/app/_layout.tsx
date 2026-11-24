@@ -18,6 +18,7 @@ export default function Layout() {
           <Stack.Screen name="local/novo" options={{ title: 'Novo local' }} />
           <Stack.Screen name="local/[id]" options={{ title: 'Local' }} />
           <Stack.Screen name="colheitas" options={{ title: 'Calendário de colheitas' }} />
+          <Stack.Screen name="diario/[id]" options={{ title: 'Diário' }} />
         </Stack>
       </ProvedorHorta>
     </ProvedorSessao>

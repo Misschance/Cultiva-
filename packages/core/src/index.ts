@@ -10,4 +10,5 @@ export * from './geocodificacao';
 export * from './textos';
 export * from './luz';
 export * from './planejamento';
+export * from './diario';
 export { CATALOGO, REFERENCIAS } from './catalogo.gerado';
