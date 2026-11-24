@@ -15,3 +15,4 @@ export { CATALOGO, REFERENCIAS } from './catalogo.gerado';
 export * from './visual';
 export * from './calendario';
 export * from './epocas';
+export * from './colhido';

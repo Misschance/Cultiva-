@@ -101,6 +101,7 @@ export default function MinhaHorta() {
       <View style={{ gap: 8 }}>
         <Botao titulo="Novo local" variante="secundario" onPress={() => router.push('/local/novo')} />
         {dados.plantios.length > 0 && <Botao titulo="Calendário de colheitas" variante="secundario" onPress={() => router.push('/colheitas')} />}
+        <Botao titulo="Minhas colheitas" variante="secundario" onPress={() => router.push('/colhido')} />
       </View>
     </Tela>
   );
