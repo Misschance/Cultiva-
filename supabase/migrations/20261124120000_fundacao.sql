@@ -188,16 +188,5 @@ create policy "dono" on public.confirmacoes_fase for all to authenticated
 create policy "dono" on public.registros_acao for all to authenticated
   using (usuario_id = (select auth.uid())) with check (usuario_id = (select auth.uid()));
 
--- Perfil criado junto com a conta. security definer com search_path vazio para não ser sequestrável.
-create function public.criar_perfil() returns trigger
-  language plpgsql security definer set search_path = ''
-as $$
-begin
-  insert into public.perfis (id) values (new.id);
-  return new;
-end;
-$$;
-revoke execute on function public.criar_perfil() from public, anon, authenticated;
-
-create trigger ao_criar_usuario after insert on auth.users
-  for each row execute function public.criar_perfil();
+-- O próprio usuário cria o seu perfil no primeiro acesso (sem gatilho nem função security definer).
+create policy "dono cria" on public.perfis for insert to authenticated with check (id = (select auth.uid()));

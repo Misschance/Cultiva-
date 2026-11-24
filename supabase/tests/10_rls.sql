@@ -7,10 +7,6 @@ insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-00000000000a', 'ana@exemplo.test'),
   ('00000000-0000-0000-0000-00000000000b', 'beto@exemplo.test');
 
--- Perfil criado pelo gatilho
-do $$ begin
-  assert (select count(*) from public.perfis) = 2, 'gatilho deveria criar um perfil por usuário';
-end $$;
 
 -- Funções auxiliares de teste
 create or replace function pg_temp.como(usuario uuid) returns void language plpgsql as $$
@@ -27,9 +23,12 @@ exception
     raise notice 'ok: %', descricao;
 end $$;
 
--- Ana cria um local e um plantio
+-- Ana cria o perfil, um local e um plantio
 select pg_temp.como('00000000-0000-0000-0000-00000000000a');
 set role authenticated;
+insert into public.perfis (id, nome) values ('00000000-0000-0000-0000-00000000000a', 'Ana');
+select pg_temp.deve_falhar($$insert into public.perfis (id) values ('00000000-0000-0000-0000-00000000000b')$$,
+  'criar perfil de outro usuário');
 insert into public.locais (id, nome, tipo, volume_litros) values ('10000000-0000-0000-0000-00000000000a', 'Varanda', 'vaso', 10);
 insert into public.plantios (id, especie_id, especie_versao, local_id, origem, data_plantio)
   values ('20000000-0000-0000-0000-00000000000a', 'alface', 1, '10000000-0000-0000-0000-00000000000a', 'semente', '2026-11-01');
@@ -58,6 +57,7 @@ reset role;
 -- Beto não enxerga nem altera nada da Ana
 select pg_temp.como('00000000-0000-0000-0000-00000000000b');
 set role authenticated;
+insert into public.perfis (id, nome) values ('00000000-0000-0000-0000-00000000000b', 'Beto');
 do $$ begin
   assert (select count(*) from public.locais) = 0, 'Beto não deveria ver locais da Ana';
   assert (select count(*) from public.plantios) = 0, 'Beto não deveria ver plantios da Ana';
