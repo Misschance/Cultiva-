@@ -23,6 +23,7 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno ou meia-sombra",
     "dicaAcessivel": "Use cultivar de verão na época quente. Colha antes de soltar o pendão, senão amarga.",
+    "pontoColheita": null,
     "fases": [
       {
         "ordem": 1,
@@ -91,6 +92,7 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno ou meia-sombra",
     "dicaAcessivel": "Semeie direto no vaso e desbaste deixando 15 cm entre plantas.",
+    "pontoColheita": null,
     "fases": [
       {
         "ordem": 1,
@@ -148,6 +150,7 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno",
     "dicaAcessivel": "Colha as folhas de baixo para cima; a planta produz por meses. Pode ser feita de broto lateral (R3 p.36).",
+    "pontoColheita": null,
     "fases": [
       {
         "ordem": 1,
@@ -216,6 +219,11 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno",
     "dicaAcessivel": "Amarre a planta num tutor quando tiver 30 cm e tire os brotos laterais de 2 a 5 cm (R4 p.14).",
+    "pontoColheita": {
+      "texto": "Colher os frutos maduros ou quase maduros.",
+      "fonte": "R1 p.15",
+      "confianca": "A"
+    },
     "fases": [
       {
         "ordem": 1,
@@ -257,7 +265,7 @@ export const CATALOGO: readonly Especie[] = [
         "diaFim": 100,
         "rega": "A cada 2 a 3 dias na planta adulta; quase todo dia no início. Canteiro: 4 a 10 L/m²; cova: 3 a 5 L (R1 p.9). Vaso: regar quando a terra de cima estiver seca ao toque (C). Molhar só o pé, nunca as folhas (R4 p.13).",
         "adubacao": "Seguir cobertura parcelada em plantas de colheita longa (R1 p.10).",
-        "intervencoes": "Colher no ponto: R1 Tab.1",
+        "intervencoes": "Ponto de colheita: Colher os frutos maduros ou quase maduros. (R1 p.15)",
         "fonte": "R1 Tab.1",
         "confianca": "A"
       }
@@ -284,6 +292,7 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno",
     "dicaAcessivel": "Boa para vaso grande ao sol. Colha os frutos maduros para estimular novos.",
+    "pontoColheita": null,
     "fases": [
       {
         "ordem": 1,
@@ -352,6 +361,11 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno",
     "dicaAcessivel": "Precisa de vaso fundo e terra solta, sem pedras. Desbaste aos 20-35 dias (R1 p.9).",
+    "pontoColheita": {
+      "texto": "Colher quando a raiz estiver bem desenvolvida, antes de ficar fibrosa e antes de a planta pendoar (soltar a haste de flor).",
+      "fonte": "R1 p.15",
+      "confianca": "A"
+    },
     "fases": [
       {
         "ordem": 1,
@@ -382,7 +396,7 @@ export const CATALOGO: readonly Especie[] = [
         "diaFim": 110,
         "rega": "A cada 2 a 3 dias na planta adulta; quase todo dia no início. Canteiro: 4 a 10 L/m²; cova: 3 a 5 L (R1 p.9). Vaso: regar quando a terra de cima estiver seca ao toque (C).",
         "adubacao": "Seguir cobertura parcelada em plantas de colheita longa (R1 p.10).",
-        "intervencoes": "Colher no ponto: R1 Tab.1",
+        "intervencoes": "Ponto de colheita: Colher quando a raiz estiver bem desenvolvida, antes de ficar fibrosa e antes de a planta pendoar (soltar a haste de flor). (R1 p.15)",
         "fonte": "R1 Tab.1",
         "confianca": "A"
       }
@@ -409,6 +423,11 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno",
     "dicaAcessivel": "O mais rápido da horta: colha em cerca de um mês. Desbaste quando tiver 5 cm (R3 p.36).",
+    "pontoColheita": {
+      "texto": "Colher quando a raiz estiver bem desenvolvida, antes de ficar fibrosa e antes de pendoar; em geral 25 a 30 dias após semear.",
+      "fonte": "R1 p.15",
+      "confianca": "A"
+    },
     "fases": [
       {
         "ordem": 1,
@@ -439,7 +458,7 @@ export const CATALOGO: readonly Especie[] = [
         "diaFim": 35,
         "rega": "A cada 2 a 3 dias na planta adulta; quase todo dia no início. Canteiro: 4 a 10 L/m²; cova: 3 a 5 L (R1 p.9). Vaso: regar quando a terra de cima estiver seca ao toque (C).",
         "adubacao": "Seguir cobertura parcelada em plantas de colheita longa (R1 p.10).",
-        "intervencoes": "Colher no ponto: R1 Tab.1 (R2: 25-30)",
+        "intervencoes": "Ponto de colheita: Colher quando a raiz estiver bem desenvolvida, antes de ficar fibrosa e antes de pendoar; em geral 25 a 30 dias após semear. (R1 p.15)",
         "fonte": "R1 Tab.1 (R2: 25-30)",
         "confianca": "A"
       }
@@ -466,6 +485,7 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno ou meia-sombra",
     "dicaAcessivel": "Corte as folhas a uns 3 cm do chão que ela rebrota.",
+    "pontoColheita": null,
     "fases": [
       {
         "ordem": 1,
@@ -534,6 +554,7 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno ou meia-sombra",
     "dicaAcessivel": "Germina devagar, tenha paciência. Desbaste com 3-4 folhas definitivas (R3 p.36).",
+    "pontoColheita": null,
     "fases": [
       {
         "ordem": 1,
@@ -591,6 +612,7 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno",
     "dicaAcessivel": "Bom para o calor. Faça semeaduras a cada 3-4 semanas para ter sempre.",
+    "pontoColheita": null,
     "fases": [
       {
         "ordem": 1,
@@ -645,6 +667,11 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno",
     "dicaAcessivel": "Desbaste 2-3 semanas após germinar e transplante com 3 cm (R5). Adubo: 5 kg de esterco por m² (R5).",
+    "pontoColheita": {
+      "texto": "Colher quando a planta começar a florir, de manhã até as 11 h, para não perder o aroma.",
+      "fonte": "R5",
+      "confianca": "A"
+    },
     "fases": [
       {
         "ordem": 1,
@@ -675,7 +702,7 @@ export const CATALOGO: readonly Especie[] = [
         "diaFim": null,
         "rega": "Quase todo dia, de manhã cedo ou fim da tarde. Canteiro: 4 a 10 L/m² aplicados devagar (R1 p.9). Vaso: regar quando a terra de cima estiver seca ao toque (C).",
         "adubacao": "Seguir cobertura parcelada em plantas de colheita longa (R1 p.10).",
-        "intervencoes": "Colher no ponto: R5: colher na floração, de manhã até 11 h",
+        "intervencoes": "Ponto de colheita: Colher quando a planta começar a florir, de manhã até as 11 h, para não perder o aroma. (R5)",
         "fonte": "R5: colher na floração, de manhã até 11 h",
         "confianca": "A"
       }
@@ -699,6 +726,11 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno ou meia-sombra",
     "dicaAcessivel": "Espalha muito: plante sozinha no vaso. Não misture tipos de hortelã (R6).",
+    "pontoColheita": {
+      "texto": "Colher as folhas a partir do 4º mês após o plantio, bem cedo ou à noite, para não perder o óleo essencial.",
+      "fonte": "R6",
+      "confianca": "A"
+    },
     "fases": [
       {
         "ordem": 1,
@@ -718,7 +750,7 @@ export const CATALOGO: readonly Especie[] = [
         "diaFim": null,
         "rega": "Gosta de terra sempre úmida, sem encharcar (C).",
         "adubacao": "Seguir cobertura parcelada em plantas de colheita longa (R1 p.10).",
-        "intervencoes": "Colher no ponto: R6: folhas a partir do 4º mês",
+        "intervencoes": "Ponto de colheita: Colher as folhas a partir do 4º mês após o plantio, bem cedo ou à noite, para não perder o óleo essencial. (R6)",
         "fonte": "R6: folhas a partir do 4º mês",
         "confianca": "A"
       }
@@ -742,6 +774,7 @@ export const CATALOGO: readonly Especie[] = [
     "luzHorasMin": 5,
     "localIdeal": "sol pleno",
     "dicaAcessivel": "Compre mudas sadias; não se planta morango por semente em casa. Não deixe os frutos encostarem na terra.",
+    "pontoColheita": null,
     "fases": [
       {
         "ordem": 1,

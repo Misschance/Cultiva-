@@ -119,6 +119,7 @@ export default function DetalhePlantio() {
               Colheita começa entre {formatarData(colheita.inicio)} e {formatarData(colheita.fim)}
             </Paragrafo>
           )}
+          {colheita && especie.pontoColheita && <Paragrafo suave>Ponto de colheita: {especie.pontoColheita.texto}</Paragrafo>}
           {precisaConfirmar && (
             <Botao
               titulo="Germinou"

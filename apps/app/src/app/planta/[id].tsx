@@ -84,6 +84,7 @@ export default function FichaPlanta() {
           }
           confianca={e?.colheita_confianca}
         />
+        <Item titulo="Ponto de colheita" texto={especie.pontoColheita?.texto} confianca={especie.pontoColheita?.confianca} />
         <Item titulo="Clima" texto={e?.clima_temperatura} />
       </Cartao>
 

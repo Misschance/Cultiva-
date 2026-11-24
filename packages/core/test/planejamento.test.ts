@@ -153,3 +153,11 @@ describe('calendário de colheitas', () => {
     expect(cal[3]!.colheitas).toEqual([]);
   });
 });
+
+describe('ponto de colheita', () => {
+  it('só existe com fonte e confiança, e fica vazio onde a base não diz', () => {
+    expect(especie('rabanete').pontoColheita?.confianca).toBe('A');
+    expect(especie('alface').pontoColheita).toBeNull();
+    for (const e of CATALOGO) if (e.pontoColheita) expect(e.pontoColheita.fonte).not.toBe('');
+  });
+});
