@@ -1,6 +1,6 @@
 import { Redirect } from 'expo-router';
 import { Tabs } from 'expo-router/tabs';
-import { View } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { Carregando, fontes, useCores } from '../../components/ui';
 import { useSessao } from '../../lib/sessao';
@@ -31,6 +31,8 @@ function IconeAba({ nome, ativo }: { nome: Icone; ativo: boolean }) {
 export default function Abas() {
   const { sessao, carregando } = useSessao();
   const c = useCores();
+  // Em telas largas (computador, tablet) a navegação vai para a lateral; no celular fica embaixo.
+  const lateral = useWindowDimensions().width >= 768;
   if (carregando) return <Carregando />;
   if (!sessao) return <Redirect href="/entrar" />;
 
@@ -45,7 +47,12 @@ export default function Abas() {
         headerShown: false,
         tabBarActiveTintColor: c.verdeEscuro,
         tabBarInactiveTintColor: c.textoSuave,
-        tabBarStyle: { backgroundColor: c.cartao, borderTopColor: c.borda, height: 68, paddingTop: 6 },
+        tabBarPosition: lateral ? 'left' : 'bottom',
+        tabBarVariant: lateral ? 'material' : 'uikit',
+        tabBarLabelPosition: 'below-icon',
+        tabBarStyle: lateral
+          ? { backgroundColor: c.cartao, borderRightColor: c.borda, width: 124, paddingTop: 24 }
+          : { backgroundColor: c.cartao, borderTopColor: c.borda, height: 68, paddingTop: 6 },
         tabBarLabelStyle: { fontSize: 12, fontFamily: fontes.medio, marginTop: 2 },
         sceneStyle: { backgroundColor: c.fundo },
       }}
