@@ -1,4 +1,5 @@
 import { BricolageGrotesque_600SemiBold } from '@expo-google-fonts/bricolage-grotesque';
+import { Fraunces_600SemiBold } from '@expo-google-fonts/fraunces';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme } from 'expo-router';
@@ -7,6 +8,7 @@ import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
 import { BotaoMenu, BotaoVoltar } from '../components/navegacao';
 import { fontes, useCores, useEscuro } from '../components/ui';
+import { ProvedorEstilo } from '../lib/estilo';
 import { ProvedorHorta } from '../lib/horta';
 import { ProvedorSessao } from '../lib/sessao';
 
@@ -22,8 +24,16 @@ function useTemaNavegacao(): Theme {
 }
 
 export default function Layout() {
+  return (
+    <ProvedorEstilo>
+      <Raiz />
+    </ProvedorEstilo>
+  );
+}
+
+function Raiz() {
   // Fontes vão no pacote do app: nada é buscado em servidor de terceiros.
-  const [fontesProntas, falhaFontes] = useFonts({ BricolageGrotesque_600SemiBold, Inter_400Regular, Inter_500Medium, Inter_600SemiBold });
+  const [fontesProntas, falhaFontes] = useFonts({ BricolageGrotesque_600SemiBold, Fraunces_600SemiBold, Inter_400Regular, Inter_500Medium, Inter_600SemiBold });
   const tema = useTemaNavegacao();
   const c = useCores();
 
