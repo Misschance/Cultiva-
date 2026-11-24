@@ -1,5 +1,6 @@
--- Só para testes locais e no CI: reproduz o mínimo do Supabase (schema auth, auth.uid(), papéis e
--- os privilégios padrão que o Supabase dá a anon e authenticated). Nunca rode isto num projeto Supabase.
+-- Só para testes locais e no CI: reproduz o mínimo do Supabase (schema auth, auth.uid() e papéis).
+-- Como nos projetos novos do Supabase, tabelas novas NÃO são expostas a anon/authenticated sozinhas:
+-- a migração precisa dar os GRANTs. Nunca rode isto num projeto Supabase.
 create extension if not exists pgcrypto;
 do $$ begin
   if not exists (select from pg_roles where rolname = 'anon') then create role anon nologin; end if;
@@ -12,6 +13,3 @@ create function auth.uid() returns uuid language sql stable as $$
 $$;
 grant usage on schema auth to anon, authenticated;
 grant execute on function auth.uid() to anon, authenticated;
-grant usage on schema public to anon, authenticated;
-alter default privileges in schema public grant all on tables to anon, authenticated;
-alter default privileges in schema public grant all on sequences to anon, authenticated;

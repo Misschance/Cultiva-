@@ -165,6 +165,13 @@ alter table public.plantios enable row level security;
 alter table public.confirmacoes_fase enable row level security;
 alter table public.registros_acao enable row level security;
 
+-- Permissões explícitas: projetos novos do Supabase não expõem tabelas novas à API automaticamente.
+-- O GRANT abre a tabela para o papel; o RLS abaixo decide quais linhas cada usuário vê.
+grant usage on schema public to anon, authenticated;
+grant select on public.referencias, public.especies, public.fases, public.epocas_plantio to anon, authenticated;
+grant select, insert, update on public.perfis to authenticated;
+grant select, insert, update, delete on public.locais, public.plantios, public.confirmacoes_fase, public.registros_acao to authenticated;
+
 -- Catálogo: qualquer pessoa lê; ninguém escreve pela API (só migrações e o painel editorial com service role).
 create policy "catalogo leitura" on public.referencias for select to anon, authenticated using (true);
 create policy "catalogo leitura" on public.especies for select to anon, authenticated using (true);
