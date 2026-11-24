@@ -21,4 +21,8 @@ Os requisitos completos (SEG-1 a SEG-23) estão na especificação do produto. O
 - **Erros de login** com mensagem genérica, sem revelar se o e-mail existe.
 - **Localização** só com consentimento, arredondada a ~1 km, e enviada a terceiros só arredondada.
 - **Logs** sem dados pessoais (e-mail, coordenadas, texto do diário).
+- **Edge Functions** que usam a chave de serviço (ex.: `supabase/functions/excluir-conta`) pegam o usuário do token
+  validado, nunca de um id enviado pelo app, e só leem a chave da variável que o Supabase injeta no servidor.
+- **Exclusão de conta (LGPD)**: a aba Conta apaga fotos, dados e o usuário pela função `excluir-conta`.
+  Toda tabela nova com dados de usuário precisa de `on delete cascade` a partir de `auth.users`.
 - **Funções `security definer`** sempre com `set search_path = ''` e `execute` revogado de `public`, `anon` e `authenticated`.

@@ -1,9 +1,9 @@
-import { buscarCidade, type Cidade } from '@cultivae/core';
+import { buscarCidade, confirmaExclusao, PALAVRA_EXCLUSAO, type Cidade } from '@cultivae/core';
 import { useEffect, useState } from 'react';
 import { Aviso, Botao, Campo, Cartao, Paragrafo, Subtitulo, Tela, Titulo } from '../../components/ui';
-import { removerLocalizacao, salvarHorarioLembrete, salvarLocalizacao } from '../../lib/dados';
+import { excluirConta, removerLocalizacao, salvarHorarioLembrete, salvarLocalizacao } from '../../lib/dados';
 import { useHorta } from '../../lib/horta';
-import { agendarLembretes, lembretesDisponiveis, lembretesPermitidos, pedirPermissaoLembretes } from '../../lib/lembretes';
+import { agendarLembretes, cancelarLembretes, lembretesDisponiveis, lembretesPermitidos, pedirPermissaoLembretes } from '../../lib/lembretes';
 import { useSessao } from '../../lib/sessao';
 import { supabase } from '../../lib/supabase';
 
@@ -18,6 +18,8 @@ export default function Conta() {
   const [permitido, setPermitido] = useState(false);
   const [msg, setMsg] = useState<{ tipo: 'erro' | 'ok'; texto: string } | null>(null);
   const [ocupado, setOcupado] = useState<string | null>(null);
+  const [excluindo, setExcluindo] = useState(false);
+  const [confirmacao, setConfirmacao] = useState('');
 
   useEffect(() => {
     void lembretesPermitidos().then(setPermitido);
@@ -143,7 +145,46 @@ export default function Conta() {
       )}
 
       <Subtitulo>Sessão</Subtitulo>
-      <Botao titulo="Sair" variante="perigo" onPress={() => void supabase.auth.signOut()} />
+      <Botao titulo="Sair" variante="secundario" onPress={() => void supabase.auth.signOut()} />
+
+      <Subtitulo>Excluir conta</Subtitulo>
+      {!excluindo ? (
+        <Botao titulo="Excluir minha conta" variante="perigo" onPress={() => setExcluindo(true)} />
+      ) : (
+        <Cartao>
+          <Paragrafo>
+            Isto apaga para sempre sua conta, seus locais, suas plantas, o diário, as fotos e as colheitas. Não dá para desfazer.
+          </Paragrafo>
+          <Campo
+            rotulo={`Para confirmar, digite ${PALAVRA_EXCLUSAO}`}
+            value={confirmacao}
+            onChangeText={setConfirmacao}
+            autoCapitalize="characters"
+            autoCorrect={false}
+            maxLength={20}
+          />
+          <Botao
+            titulo="Excluir tudo"
+            variante="perigo"
+            desativado={!confirmaExclusao(confirmacao)}
+            carregando={ocupado === 'excluir'}
+            onPress={() =>
+              agir('excluir', async () => {
+                await excluirConta();
+                await cancelarLembretes().catch(() => undefined);
+              })
+            }
+          />
+          <Botao
+            titulo="Cancelar"
+            variante="secundario"
+            onPress={() => {
+              setExcluindo(false);
+              setConfirmacao('');
+            }}
+          />
+        </Cartao>
+      )}
     </Tela>
   );
 }

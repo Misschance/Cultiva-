@@ -79,3 +79,9 @@ export async function agendarLembretes(dados: DadosHorta, hoje: DataISO): Promis
   }
   return agendados;
 }
+
+/** Apaga os lembretes agendados no celular (ex.: ao excluir a conta). */
+export async function cancelarLembretes(): Promise<void> {
+  if (!lembretesDisponiveis) return;
+  await Notifications.cancelAllScheduledNotificationsAsync();
+}

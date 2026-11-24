@@ -36,3 +36,11 @@ export const CAUSAS_GERMINACAO = [
   'Semente enterrada fundo demais.',
   'Temperatura fora da faixa da espécie.',
 ];
+
+/** Palavra que a pessoa digita para confirmar a exclusão da conta. */
+export const PALAVRA_EXCLUSAO = 'EXCLUIR';
+
+/** A confirmação aceita maiúsculas ou minúsculas e espaços nas pontas. */
+export function confirmaExclusao(texto: string): boolean {
+  return texto.trim().toUpperCase() === PALAVRA_EXCLUSAO;
+}
