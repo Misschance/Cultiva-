@@ -1,8 +1,7 @@
 import { CATALOGO, avaliarLuz, type SituacaoLuz } from '@cultivae/core';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Text } from 'react-native';
-import { Campo, Cartao, Opcoes, Paragrafo, Tela, Titulo, cores } from '../../components/ui';
+import { Campo, Cartao, Opcoes, Paragrafo, Tela, Titulo, Texto, useCores } from '../../components/ui';
 import { useHorta } from '../../lib/horta';
 import { NOME_GRUPO } from '../../lib/rotulos';
 
@@ -24,6 +23,7 @@ const normalizar = (t: string) =>
     .toLowerCase();
 
 export default function Plantas() {
+  const cores = useCores();
   const [busca, setBusca] = useState('');
   const [filtro, setFiltro] = useState<Filtro>('todas');
   const { local: localParam } = useLocalSearchParams<{ local?: string }>();
@@ -75,16 +75,16 @@ export default function Plantas() {
       {lista.length === 0 && <Paragrafo suave>Nenhuma planta encontrada.</Paragrafo>}
       {lista.map(({ e, luz }) => (
         <Cartao key={e.id} rotulo={e.nomePopular} onPress={() => router.push({ pathname: '/planta/[id]', params: { id: e.id } })}>
-          <Text style={{ fontSize: 17, fontWeight: '600', color: cores.texto }}>{e.nomePopular}</Text>
-          <Text style={{ fontSize: 14, fontStyle: 'italic', color: cores.textoSuave }}>{e.nomeCientifico}</Text>
+          <Texto style={{ fontSize: 17, fontWeight: '600', color: cores.texto }}>{e.nomePopular}</Texto>
+          <Texto style={{ fontSize: 14, fontStyle: 'italic', color: cores.textoSuave }}>{e.nomeCientifico}</Texto>
           <Paragrafo suave>
             Luz: {e.localIdeal}
             {e.colheitaInicioDias ? ` · colheita a partir de ${e.colheitaInicioDias.min} dias` : ''}
           </Paragrafo>
           {luz && TEXTO_LUZ[luz] && (
-            <Text style={{ fontSize: 14, color: luz === 'pouco-sol' ? cores.alerta : cores.verdeEscuro }}>
+            <Texto style={{ fontSize: 14, color: luz === 'pouco-sol' ? cores.alerta : cores.verdeEscuro }}>
               {TEXTO_LUZ[luz]} em {local?.nome}
-            </Text>
+            </Texto>
           )}
         </Cartao>
       ))}

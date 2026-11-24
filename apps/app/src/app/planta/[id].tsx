@@ -1,10 +1,19 @@
 import { avaliarLuz, mensagemLuz } from '@cultivae/core';
 import { router, useLocalSearchParams } from 'expo-router';
+import type { EstagioVisual } from '@cultivae/core';
 import { useEffect, useState } from 'react';
-import { Linking, Text, View } from 'react-native';
-import { Aviso, Botao, Cartao, Carregando, Paragrafo, Subtitulo, Tela, Titulo, cores } from '../../components/ui';
+import { Linking, View } from 'react-native';
+import { Aviso, Botao, Cartao, Carregando, Opcoes, Paragrafo, Subtitulo, Tela, Titulo, Texto, useCores } from '../../components/ui';
+import { PlantaViva } from '../../components/planta-viva';
 import { carregarFicha, type Ficha } from '../../lib/dados';
 import { ESPECIES, useHorta } from '../../lib/horta';
+
+const ESTAGIOS: { valor: EstagioVisual; texto: string }[] = [
+  { valor: 'broto', texto: 'Broto' },
+  { valor: 'folhas', texto: 'Folhas' },
+  { valor: 'crescendo', texto: 'Crescendo' },
+  { valor: 'colheita', texto: 'Colheita' },
+];
 
 const CONFIANCA: Record<string, string> = {
   A: 'Conferido na fonte original',
@@ -13,27 +22,30 @@ const CONFIANCA: Record<string, string> = {
 };
 
 function Item({ titulo, texto, confianca }: { titulo: string; texto: unknown; confianca?: unknown }) {
+  const cores = useCores();
   if (texto === null || texto === undefined || texto === '') return null;
   const nivel = typeof confianca === 'string' ? confianca : null;
   return (
     <View style={{ gap: 2 }}>
-      <Text style={{ fontSize: 15, fontWeight: '600', color: cores.texto }}>{titulo}</Text>
+      <Texto style={{ fontSize: 15, fontWeight: '600', color: cores.texto }}>{titulo}</Texto>
       <Paragrafo>{String(texto)}</Paragrafo>
       {nivel && (
-        <Text style={{ fontSize: 13, color: nivel === 'C' ? cores.alerta : cores.textoSuave }}>
+        <Texto style={{ fontSize: 13, color: nivel === 'C' ? cores.alerta : cores.textoSuave }}>
           Confiança {nivel}: {CONFIANCA[nivel]}
-        </Text>
+        </Texto>
       )}
     </View>
   );
 }
 
 export default function FichaPlanta() {
+  const cores = useCores();
   const { id } = useLocalSearchParams<{ id: string }>();
   const especie = id ? ESPECIES.get(id) : undefined;
   const { dados } = useHorta();
   const [ficha, setFicha] = useState<Ficha | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [estagio, setEstagio] = useState<EstagioVisual>('crescendo');
 
   useEffect(() => {
     if (!especie) return;
@@ -47,8 +59,12 @@ export default function FichaPlanta() {
 
   return (
     <Tela>
+      <View style={{ alignItems: 'center', borderRadius: 24, backgroundColor: cores.verdeClaro, paddingTop: 12 }}>
+        <PlantaViva especieId={especie.id} nome={especie.nomePopular} estagio={estagio} tamanho={220} />
+      </View>
+      <Opcoes rotulo="Ver a planta" opcoes={ESTAGIOS} valor={estagio} onChange={setEstagio} />
       <Titulo>{especie.nomePopular}</Titulo>
-      <Text style={{ fontSize: 15, fontStyle: 'italic', color: cores.textoSuave }}>{especie.nomeCientifico}</Text>
+      <Texto style={{ fontSize: 15, fontStyle: 'italic', color: cores.textoSuave }}>{especie.nomeCientifico}</Texto>
       {especie.dicaAcessivel ? <Aviso tipo="ok">{especie.dicaAcessivel}</Aviso> : null}
       <Botao titulo="Plantar esta" onPress={() => router.push({ pathname: '/plantio/novo', params: { especie: especie.id } })} />
 
@@ -107,10 +123,10 @@ export default function FichaPlanta() {
       <Subtitulo>Fases</Subtitulo>
       {especie.fases.map((f) => (
         <Cartao key={f.ordem}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: cores.texto }}>
+          <Texto style={{ fontSize: 16, fontWeight: '600', color: cores.texto }}>
             {f.nome}
             {f.diaInicio != null ? ` · dia ${f.diaInicio}${f.diaFim != null ? ` a ${f.diaFim}` : ' em diante'}` : ''}
-          </Text>
+          </Texto>
           <Item titulo="Rega" texto={f.rega} />
           <Item titulo="Adubação" texto={f.adubacao} />
           <Item titulo="Cuidados" texto={f.intervencoes} confianca={f.confianca} />
@@ -135,14 +151,14 @@ export default function FichaPlanta() {
         <>
           <Subtitulo>Fontes</Subtitulo>
           {ficha.referencias.map((r) => (
-            <Text
+            <Texto
               key={r.id}
               style={{ fontSize: 13, color: r.url ? cores.verdeEscuro : cores.textoSuave }}
               onPress={r.url ? () => void Linking.openURL(r.url!) : undefined}
               accessibilityRole={r.url ? 'link' : 'text'}
             >
               {r.id}. {r.citacao}
-            </Text>
+            </Texto>
           ))}
         </>
       )}
