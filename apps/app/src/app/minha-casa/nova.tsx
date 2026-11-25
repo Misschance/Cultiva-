@@ -19,10 +19,10 @@ export default function NovaPlantaCasa() {
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
 
-  if (!planta) return <Tela><Aviso tipo="erro">Escolha uma planta na aba Plantas, em "Plantas de casa".</Aviso></Tela>;
+  if (!planta) return <Tela largura="estreita"><Aviso tipo="erro">Escolha uma planta na aba Plantas, em "Plantas de casa".</Aviso></Tela>;
   if (dados && !dados.casa) {
     return (
-      <Tela>
+      <Tela largura="estreita">
         <Aviso>O cadastro de plantas de casa ainda não está disponível. Tente de novo mais tarde.</Aviso>
       </Tela>
     );
@@ -53,7 +53,7 @@ export default function NovaPlantaCasa() {
   }
 
   return (
-    <Tela>
+    <Tela largura="estreita">
       <View style={{ alignItems: 'center', borderRadius: 28, backgroundColor: c.verdeClaro, paddingTop: 8, overflow: 'hidden' }}>
         <CasaViva plantaId={planta.id} nome={planta.nomePopular} tamanho={160} />
       </View>

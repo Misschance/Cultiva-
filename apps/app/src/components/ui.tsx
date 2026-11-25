@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
+import { LarguraConteudo, larguraMaxima, margemLateral, type Largura } from './layout';
 import {
   ActivityIndicator,
   Pressable,
@@ -7,6 +8,7 @@ import {
   Text,
   TextInput,
   View,
+  useWindowDimensions,
   type TextInputProps,
   type TextProps,
   type TextStyle,
@@ -19,7 +21,7 @@ export { MODOS, fontes, useAparencia, useCores, useEscuro, type Cores, type Modo
 
 function criarEstilos(c: Cores) {
   return StyleSheet.create({
-    tela: { padding: 20, gap: 14, maxWidth: 720, width: '100%', alignSelf: 'center', paddingBottom: 48 },
+    tela: { gap: 14, width: '100%', alignSelf: 'center', paddingBottom: 48 },
     fundo: { flex: 1, backgroundColor: 'transparent' },
     centro: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: c.fundo },
     titulo: { fontSize: f.tamanhoTitulo, lineHeight: Math.round(f.tamanhoTitulo * 1.12), fontFamily: f.fonteTitulo, color: c.texto, letterSpacing: -0.8 },
@@ -78,19 +80,28 @@ export function Texto({ style, ...props }: TextProps) {
   return <Text {...props} style={[{ color: c.texto, fontSize: 16 }, resto, { fontFamily: familia }]} />;
 }
 
-/** Tela rolável. `topo` reserva a área da barra de status nas abas, que não têm cabeçalho. */
-export function Tela({ children, topo }: { children: ReactNode; topo?: boolean }) {
+/**
+ * Tela rolável. `topo` reserva a área da barra de status nas abas, que não têm cabeçalho.
+ * `largura`: "estreita" para formulários, "normal" para leitura, "larga" para telas com colunas e grades.
+ */
+export function Tela({ children, topo, largura = 'normal' }: { children: ReactNode; topo?: boolean; largura?: Largura }) {
   const e = useEstilos();
   const margem = useSafeAreaInsets();
-  const rolagem = (
-    <ScrollView style={e.fundo} contentContainerStyle={[e.tela, topo && { paddingTop: margem.top + 20 }]} keyboardShouldPersistTaps="handled">
-      {children}
-    </ScrollView>
-  );
+  const janela = useWindowDimensions().width;
+  const lado = margemLateral(janela);
+  const maximo = larguraMaxima(largura) + 2 * lado;
+  const [medida, setMedida] = useState<number | null>(null);
   return (
     <View style={{ flex: 1 }}>
       <Manchas />
-      {rolagem}
+      <ScrollView style={e.fundo} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <View
+          style={[e.tela, { maxWidth: maximo, padding: lado, paddingBottom: 48 }, topo && { paddingTop: margem.top + 20 }]}
+          onLayout={(ev) => setMedida(Math.max(0, Math.floor(ev.nativeEvent.layout.width - 2 * lado)))}
+        >
+          <LarguraConteudo.Provider value={medida ?? Math.min(janela, maximo) - 2 * lado}>{children}</LarguraConteudo.Provider>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -361,3 +372,4 @@ export function Dado({ titulo, texto, confianca }: { titulo: string; texto: unkn
     </View>
   );
 }
+export { ComLargura, Colunas, Grade, useLarguraConteudo } from './layout';
