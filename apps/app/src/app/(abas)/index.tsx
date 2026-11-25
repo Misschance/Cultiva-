@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { BotaoTema } from '../../components/navegacao';
 import { CasaViva } from '../../components/casa-viva';
 import { DestaquePlanta } from '../../components/destaque';
-import { Aviso, Botao, Cartao, Carregando, Paragrafo, Subtitulo, Tela, Texto, Titulo, fontes, useCores } from '../../components/ui';
+import { Aviso, Botao, Cartao, Colunas, Grade, Carregando, Paragrafo, Subtitulo, Tela, Texto, Titulo, fontes, useCores } from '../../components/ui';
 import { confirmarFase, encerrarPlantio, registrarAcao, registrarAcoes, registrarCuidadoCasa } from '../../lib/dados';
 import { ESPECIES, useHorta } from '../../lib/horta';
 import { resumirPlanta } from '../../lib/visual';
@@ -62,7 +62,7 @@ export default function Hoje() {
   const nome = dados?.perfil.nome?.split(' ')[0];
 
   return (
-    <Tela topo>
+    <Tela topo largura="larga">
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
         <View style={{ gap: 4, flex: 1 }}>
           <Texto style={{ fontSize: 14, color: c.textoSuave }}>
@@ -81,141 +81,153 @@ export default function Hoje() {
         <Paragrafo suave>Escolha sua cidade na aba Conta para a rega se ajustar à chuva e ao calor.</Paragrafo>
       )}
 
-      {atual && (
-        <DestaquePlanta
-          resumo={atual.resumo}
-          especieId={atual.plantio.especieId}
-          local={atual.local?.nome ?? 'Sem local'}
-          indice={Math.min(indice, total - 1)}
-          total={total}
-          onAnterior={() => setIndice((i) => (Math.min(i, total - 1) + total - 1) % total)}
-          onProxima={() => setIndice((i) => (Math.min(i, total - 1) + 1) % total)}
-          onAbrir={() => router.push({ pathname: '/plantio/[id]', params: { id: atual.plantio.id } })}
-        />
-      )}
+      <Colunas
+        larguraFixa={420}
+        grudar
+        esquerda={
+          atual ? (
+            <DestaquePlanta
+              resumo={atual.resumo}
+              especieId={atual.plantio.especieId}
+              local={atual.local?.nome ?? 'Sem local'}
+              indice={Math.min(indice, total - 1)}
+              total={total}
+              onAnterior={() => setIndice((i) => (Math.min(i, total - 1) + total - 1) % total)}
+              onProxima={() => setIndice((i) => (Math.min(i, total - 1) + 1) % total)}
+              onAbrir={() => router.push({ pathname: '/plantio/[id]', params: { id: atual.plantio.id } })}
+            />
+          ) : null
+        }
+      >
+        <View style={{ gap: 14 }}>
+          {semPlantas ? (
+            <Cartao>
+              <Texto style={{ fontSize: 20, fontFamily: fontes.titulo }}>Sua horta ainda está vazia</Texto>
+              <Paragrafo suave>Escolha uma planta na aba Plantas e toque em "Plantar esta".</Paragrafo>
+              <Botao titulo="Ver plantas" onPress={() => router.push('/plantas')} />
+            </Cartao>
+          ) : tarefas.length + conferencias.length === 0 ? (
+            <Aviso tipo="ok">Nada para fazer hoje. Suas plantas estão em dia.</Aviso>
+          ) : (
+            <Subtitulo>Para fazer hoje</Subtitulo>
+          )}
 
-      {semPlantas ? (
-        <Cartao>
-          <Texto style={{ fontSize: 20, fontFamily: fontes.titulo }}>Sua horta ainda está vazia</Texto>
-          <Paragrafo suave>Escolha uma planta na aba Plantas e toque em "Plantar esta".</Paragrafo>
-          <Botao titulo="Ver plantas" onPress={() => router.push('/plantas')} />
-        </Cartao>
-      ) : tarefas.length + conferencias.length === 0 ? (
-        <Aviso tipo="ok">Nada para fazer hoje. Suas plantas estão em dia.</Aviso>
-      ) : (
-        <Subtitulo>Para fazer hoje</Subtitulo>
-      )}
-
-      {[...porLocal.entries()].map(([localId, lista]) => {
-        const local = locais.get(localId);
-        const regas = lista.filter((t) => t.tipo === 'rega');
-        return (
-          <View key={localId} style={{ gap: 8 }}>
-            <Texto style={{ fontSize: 15, fontWeight: '600', color: c.textoSuave }}>{local?.nome ?? 'Sem local'}</Texto>
-            {regas.length > 1 && (
-              <Botao
-                titulo={`Reguei tudo aqui (${regas.length})`}
-                variante="secundario"
-                carregando={ocupado === `local-${localId}`}
-                onPress={() => agir(`local-${localId}`, () => registrarAcoes(regas.map((t) => t.plantioId), 'rega', hoje))}
-              />
-            )}
-            {lista.map((t) => {
-              const plantio = plantios.get(t.plantioId);
-              const especie = plantio ? ESPECIES.get(plantio.especieId) : undefined;
-              if (!plantio || !especie) return null;
-              const chave = `${t.tipo}-${t.plantioId}`;
-              const proxima = faseAposGerminacao(especie);
-              return (
-                <Cartao key={chave}>
-                  <Texto style={{ fontSize: 13, fontWeight: '600', color: t.atrasada ? c.alerta : c.textoSuave }}>
-                    {tituloTarefa(t.tipo)}
-                    {t.atrasada ? ` · desde ${formatarData(t.devidaEm)}` : ''}
-                  </Texto>
-                  <Link href={{ pathname: '/plantio/[id]', params: { id: plantio.id } }}>
-                    <Texto style={{ fontSize: 17, fontWeight: '600' }}>{descreverTarefa(t, especie, plantio.apelido)}</Texto>
-                  </Link>
-                  {t.ajustes.map((a) => (
-                    <Paragrafo key={a} suave>
-                      {a}
-                    </Paragrafo>
-                  ))}
-                  {t.tipo === 'germinacao-atrasada' &&
-                    CAUSAS_GERMINACAO.map((causa) => (
-                      <Paragrafo key={causa} suave>
-                        • {causa}
-                      </Paragrafo>
-                    ))}
-
-                  <View style={{ gap: 8, marginTop: 8 }}>
-                    {t.tipo === 'rega' && (
-                      <Botao titulo="Reguei" carregando={ocupado === chave} onPress={() => agir(chave, () => registrarAcao(plantio.id, 'rega', hoje))} />
-                    )}
-                    {(t.tipo === 'verificar-germinacao' || t.tipo === 'germinacao-atrasada') && proxima && (
-                      <Botao
-                        titulo="Germinou"
-                        carregando={ocupado === chave}
-                        onPress={() => agir(chave, () => confirmarFase(plantio.id, proxima.nome, hoje))}
-                      />
-                    )}
-                    {t.tipo === 'germinacao-atrasada' && (
-                      <Botao
-                        titulo="Não nasceu, encerrar"
-                        variante="perigo"
-                        carregando={ocupado === `${chave}-perdido`}
-                        onPress={() => agir(`${chave}-perdido`, () => encerrarPlantio(plantio.id, 'perdido'))}
-                      />
-                    )}
-                    {t.tipo === 'colheita' && (
-                      <Botao titulo="Colhi" carregando={ocupado === chave} onPress={() => agir(chave, () => registrarAcao(plantio.id, 'colheita', hoje))} />
-                    )}
-                  </View>
-                </Cartao>
-              );
-            })}
-          </View>
-        );
-      })}
-
-      {conferencias.length > 0 && (
-        <View style={{ gap: 8 }}>
-          <Texto style={{ fontSize: 15, fontWeight: '600', color: c.textoSuave }}>Dentro de casa</Texto>
-          {conferencias.map((s) => {
-            const chave = `casa-${s.minha.id}`;
+          {[...porLocal.entries()].map(([localId, lista]) => {
+            const local = locais.get(localId);
+            const regas = lista.filter((t) => t.tipo === 'rega');
             return (
-              <Cartao key={chave}>
-                <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-                  <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: c.superficie, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-                    <CasaViva plantaId={s.planta.id} nome={s.planta.nomePopular} tamanho={70} />
-                  </View>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Texto style={{ fontSize: 13, fontWeight: '600', color: s.atraso ? c.alerta : c.textoSuave }}>
-                      Conferir a terra{s.atraso ? ` · desde ${formatarData(s.proximaConferencia!)}` : ''}
-                    </Texto>
-                    <Link href={{ pathname: '/minha-casa/[id]', params: { id: s.minha.id } }}>
-                      <Texto style={{ fontSize: 17, fontWeight: '600' }}>{descreverConferencia(s)}</Texto>
-                    </Link>
-                  </View>
-                </View>
-                {s.estacao.rega && <Paragrafo suave>{s.estacao.rega}</Paragrafo>}
-                <View style={{ gap: 8, marginTop: 8 }}>
+              <View key={localId} style={{ gap: 8 }}>
+                <Texto style={{ fontSize: 15, fontWeight: '600', color: c.textoSuave }}>{local?.nome ?? 'Sem local'}</Texto>
+                {regas.length > 1 && (
                   <Botao
-                    titulo="Toquei: ainda úmida"
+                    titulo={`Reguei tudo aqui (${regas.length})`}
                     variante="secundario"
-                    carregando={ocupado === `${chave}-conferir`}
-                    onPress={() => agir(`${chave}-conferir`, () => registrarCuidadoCasa(s.minha.id, 'conferir', hoje))}
+                    carregando={ocupado === `local-${localId}`}
+                    onPress={() => agir(`local-${localId}`, () => registrarAcoes(regas.map((t) => t.plantioId), 'rega', hoje))}
                   />
-                  <Botao
-                    titulo="Estava seca, reguei"
-                    carregando={ocupado === `${chave}-rega`}
-                    onPress={() => agir(`${chave}-rega`, () => registrarCuidadoCasa(s.minha.id, 'rega', hoje))}
-                  />
-                </View>
-              </Cartao>
+                )}
+                <Grade minimo={340}>
+                  {lista.map((t) => {
+                    const plantio = plantios.get(t.plantioId);
+                    const especie = plantio ? ESPECIES.get(plantio.especieId) : undefined;
+                    if (!plantio || !especie) return null;
+                    const chave = `${t.tipo}-${t.plantioId}`;
+                    const proxima = faseAposGerminacao(especie);
+                    return (
+                      <Cartao key={chave}>
+                        <Texto style={{ fontSize: 13, fontWeight: '600', color: t.atrasada ? c.alerta : c.textoSuave }}>
+                          {tituloTarefa(t.tipo)}
+                          {t.atrasada ? ` · desde ${formatarData(t.devidaEm)}` : ''}
+                        </Texto>
+                        <Link href={{ pathname: '/plantio/[id]', params: { id: plantio.id } }}>
+                          <Texto style={{ fontSize: 17, fontWeight: '600' }}>{descreverTarefa(t, especie, plantio.apelido)}</Texto>
+                        </Link>
+                        {t.ajustes.map((a) => (
+                          <Paragrafo key={a} suave>
+                            {a}
+                          </Paragrafo>
+                        ))}
+                        {t.tipo === 'germinacao-atrasada' &&
+                          CAUSAS_GERMINACAO.map((causa) => (
+                            <Paragrafo key={causa} suave>
+                              • {causa}
+                            </Paragrafo>
+                          ))}
+
+                        <View style={{ gap: 8, marginTop: 8 }}>
+                          {t.tipo === 'rega' && (
+                            <Botao titulo="Reguei" carregando={ocupado === chave} onPress={() => agir(chave, () => registrarAcao(plantio.id, 'rega', hoje))} />
+                          )}
+                          {(t.tipo === 'verificar-germinacao' || t.tipo === 'germinacao-atrasada') && proxima && (
+                            <Botao
+                              titulo="Germinou"
+                              carregando={ocupado === chave}
+                              onPress={() => agir(chave, () => confirmarFase(plantio.id, proxima.nome, hoje))}
+                            />
+                          )}
+                          {t.tipo === 'germinacao-atrasada' && (
+                            <Botao
+                              titulo="Não nasceu, encerrar"
+                              variante="perigo"
+                              carregando={ocupado === `${chave}-perdido`}
+                              onPress={() => agir(`${chave}-perdido`, () => encerrarPlantio(plantio.id, 'perdido'))}
+                            />
+                          )}
+                          {t.tipo === 'colheita' && (
+                            <Botao titulo="Colhi" carregando={ocupado === chave} onPress={() => agir(chave, () => registrarAcao(plantio.id, 'colheita', hoje))} />
+                          )}
+                        </View>
+                      </Cartao>
+                    );
+                  })}
+                </Grade>
+              </View>
             );
           })}
+
+          {conferencias.length > 0 && (
+            <View style={{ gap: 8 }}>
+              <Texto style={{ fontSize: 15, fontWeight: '600', color: c.textoSuave }}>Dentro de casa</Texto>
+              <Grade minimo={340}>
+                {conferencias.map((s) => {
+                  const chave = `casa-${s.minha.id}`;
+                  return (
+                    <Cartao key={chave}>
+                      <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                        <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: c.superficie, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+                          <CasaViva plantaId={s.planta.id} nome={s.planta.nomePopular} tamanho={70} />
+                        </View>
+                        <View style={{ flex: 1, gap: 2 }}>
+                          <Texto style={{ fontSize: 13, fontWeight: '600', color: s.atraso ? c.alerta : c.textoSuave }}>
+                            Conferir a terra{s.atraso ? ` · desde ${formatarData(s.proximaConferencia!)}` : ''}
+                          </Texto>
+                          <Link href={{ pathname: '/minha-casa/[id]', params: { id: s.minha.id } }}>
+                            <Texto style={{ fontSize: 17, fontWeight: '600' }}>{descreverConferencia(s)}</Texto>
+                          </Link>
+                        </View>
+                      </View>
+                      {s.estacao.rega && <Paragrafo suave>{s.estacao.rega}</Paragrafo>}
+                      <View style={{ gap: 8, marginTop: 8 }}>
+                        <Botao
+                          titulo="Toquei: ainda úmida"
+                          variante="secundario"
+                          carregando={ocupado === `${chave}-conferir`}
+                          onPress={() => agir(`${chave}-conferir`, () => registrarCuidadoCasa(s.minha.id, 'conferir', hoje))}
+                        />
+                        <Botao
+                          titulo="Estava seca, reguei"
+                          carregando={ocupado === `${chave}-rega`}
+                          onPress={() => agir(`${chave}-rega`, () => registrarCuidadoCasa(s.minha.id, 'rega', hoje))}
+                        />
+                      </View>
+                    </Cartao>
+                  );
+                })}
+              </Grade>
+            </View>
+          )}
         </View>
-      )}
+      </Colunas>
     </Tela>
   );
 }

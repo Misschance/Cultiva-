@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { CasaViva } from '../../components/casa-viva';
 import { PlantaViva } from '../../components/planta-viva';
-import { Aviso, BarraProgresso, Botao, Cartao, Carregando, Opcoes, Paragrafo, Subtitulo, Tela, Texto, Titulo, fontes, useCores } from '../../components/ui';
+import { Aviso, BarraProgresso, Botao, Cartao, Carregando, Grade, Opcoes, Paragrafo, Subtitulo, Tela, Texto, Titulo, fontes, useCores } from '../../components/ui';
 import { CASA, ESPECIES, useHorta } from '../../lib/horta';
 import { NOME_TIPO_LOCAL } from '../../lib/rotulos';
 import { resumirPlanta } from '../../lib/visual';
@@ -13,12 +13,12 @@ export default function MinhaHorta() {
   const c = useCores();
   const [filtro, setFiltro] = useState<string>('todos');
   if (carregando && !dados) return <Carregando />;
-  if (!dados) return <Tela topo>{erro && <Aviso tipo="erro">{erro}</Aviso>}</Tela>;
+  if (!dados) return <Tela topo largura="larga">{erro && <Aviso tipo="erro">{erro}</Aviso>}</Tela>;
 
   const visiveis = dados.plantios.filter((p) => filtro === 'todos' || p.localId === filtro);
 
   return (
-    <Tela topo>
+    <Tela topo largura="larga">
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
         <Titulo>Minha horta</Titulo>
         <View style={{ minWidth: 120 }}>
@@ -44,7 +44,7 @@ export default function MinhaHorta() {
         </Paragrafo>
       )}
 
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+      <Grade minimo={150} maximo={5}>
         {visiveis.map((p) => {
           const especie = ESPECIES.get(p.especieId);
           if (!especie) return null;
@@ -57,10 +57,6 @@ export default function MinhaHorta() {
               accessibilityRole="button"
               accessibilityLabel={`${r.nome}, ${r.selo.texto}`}
               style={({ pressed }) => ({
-                flexGrow: 1,
-                flexBasis: '45%',
-                maxWidth: '50%',
-                minWidth: 150,
                 backgroundColor: c.cartao,
                 borderWidth: 1,
                 borderColor: c.borda,
@@ -85,7 +81,7 @@ export default function MinhaHorta() {
             </Pressable>
           );
         })}
-      </View>
+      </Grade>
 
       {dados.casa && (
         <>
@@ -98,7 +94,7 @@ export default function MinhaHorta() {
           {dados.casa.plantas.length === 0 ? (
             <Paragrafo suave>Jiboia, espada-de-são-jorge, suculentas: cadastre as plantas de dentro de casa para lembrar de tocar na terra.</Paragrafo>
           ) : (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+            <Grade minimo={140} maximo={6}>
               {dados.casa.plantas.map((m) => {
                 const planta = CASA.get(m.plantaId);
                 if (!planta) return null;
@@ -111,10 +107,6 @@ export default function MinhaHorta() {
                     accessibilityRole="button"
                     accessibilityLabel={`${nome}${devida ? ', tocar na terra hoje' : ''}`}
                     style={({ pressed }) => ({
-                      flexGrow: 1,
-                      flexBasis: '30%',
-                      maxWidth: '50%',
-                      minWidth: 120,
                       backgroundColor: c.cartao,
                       borderWidth: 1,
                       borderColor: c.borda,
@@ -134,28 +126,30 @@ export default function MinhaHorta() {
                   </Pressable>
                 );
               })}
-            </View>
+            </Grade>
           )}
         </>
       )}
 
       <Subtitulo>Seus locais</Subtitulo>
-      {dados.locais.map((local) => (
-        <Cartao key={local.id} rotulo={`Local ${local.nome}`} onPress={() => router.push({ pathname: '/local/[id]', params: { id: local.id } })}>
-          <Texto style={{ fontSize: 17, fontFamily: fontes.titulo }}>{local.nome}</Texto>
-          <Paragrafo suave>
-            {NOME_TIPO_LOCAL[local.tipo]}
-            {local.volumeLitros ? `, ${local.volumeLitros} L` : ''}
-            {local.interno ? ', dentro de casa' : ''}
-            {local.horasSol != null ? `, ${String(local.horasSol).replace('.', ',')} h de sol` : ', sol não informado'}
-          </Paragrafo>
-        </Cartao>
-      ))}
-      <View style={{ gap: 8 }}>
+      <Grade minimo={280}>
+        {dados.locais.map((local) => (
+          <Cartao key={local.id} rotulo={`Local ${local.nome}`} onPress={() => router.push({ pathname: '/local/[id]', params: { id: local.id } })}>
+            <Texto style={{ fontSize: 17, fontFamily: fontes.titulo }}>{local.nome}</Texto>
+            <Paragrafo suave>
+              {NOME_TIPO_LOCAL[local.tipo]}
+              {local.volumeLitros ? `, ${local.volumeLitros} L` : ''}
+              {local.interno ? ', dentro de casa' : ''}
+              {local.horasSol != null ? `, ${String(local.horasSol).replace('.', ',')} h de sol` : ', sol não informado'}
+            </Paragrafo>
+          </Cartao>
+        ))}
+      </Grade>
+      <Grade minimo={240} gap={8}>
         <Botao titulo="Novo local" variante="secundario" onPress={() => router.push('/local/novo')} />
         {dados.plantios.length > 0 && <Botao titulo="Calendário de colheitas" variante="secundario" onPress={() => router.push('/colheitas')} />}
         <Botao titulo="Minhas colheitas" variante="secundario" onPress={() => router.push('/colhido')} />
-      </View>
+      </Grade>
     </Tela>
   );
 }

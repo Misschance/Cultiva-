@@ -18,7 +18,7 @@ export default function NovoPlantio() {
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
 
-  if (!especie) return <Tela><Aviso tipo="erro">Escolha uma planta na aba Plantas.</Aviso></Tela>;
+  if (!especie) return <Tela largura="estreita"><Aviso tipo="erro">Escolha uma planta na aba Plantas.</Aviso></Tela>;
   const locais = dados?.locais ?? [];
   // Sem escolha ainda: sugere o último local cadastrado (os dados podem chegar depois da tela abrir).
   const localId = localEscolhido ?? locais.at(-1)?.id ?? null;
@@ -56,7 +56,7 @@ export default function NovoPlantio() {
   }
 
   return (
-    <Tela>
+    <Tela largura="estreita">
       <Titulo>Plantar {especie.nomePopular}</Titulo>
       {locais.length === 0 ? (
         <>

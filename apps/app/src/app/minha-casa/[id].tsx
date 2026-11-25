@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { CasaViva } from '../../components/casa-viva';
-import { Aviso, Botao, Cartao, Carregando, Paragrafo, Subtitulo, Tela, Texto, Titulo, useCores } from '../../components/ui';
+import { Colunas, Aviso, Botao, Cartao, Carregando, Paragrafo, Subtitulo, Tela, Texto, Titulo, useCores } from '../../components/ui';
 import { registrarCuidadoCasa, removerPlantaCasa } from '../../lib/dados';
 import { CASA, useHorta } from '../../lib/horta';
 
@@ -48,64 +48,71 @@ export default function MinhaPlantaCasa() {
   else quando = 'A base ainda não tem um intervalo para esta planta. Toque na terra de vez em quando.';
 
   return (
-    <Tela>
-      <View style={{ alignItems: 'center', borderRadius: 28, backgroundColor: c.verdeClaro, paddingTop: 8, overflow: 'hidden' }}>
-        <CasaViva plantaId={planta.id} nome={planta.nomePopular} tamanho={200} />
-      </View>
-      <View style={{ gap: 2 }}>
-        <Titulo>{nome}</Titulo>
-        <Texto style={{ fontSize: 15, color: c.textoSuave }}>
-          {minha.apelido ? planta.nomePopular : planta.nomeCientifico}
-          {minha.comodo ? ` · ${minha.comodo}` : ''}
-        </Texto>
-      </View>
+    <Tela largura="larga">
+      <Colunas
+        larguraFixa={380}
+        esquerda={
+          <>
+            <View style={{ alignItems: 'center', borderRadius: 28, backgroundColor: c.verdeClaro, paddingTop: 8, overflow: 'hidden' }}>
+              <CasaViva plantaId={planta.id} nome={planta.nomePopular} tamanho={200} />
+            </View>
+            <View style={{ gap: 2 }}>
+              <Titulo>{nome}</Titulo>
+              <Texto style={{ fontSize: 15, color: c.textoSuave }}>
+                {minha.apelido ? planta.nomePopular : planta.nomeCientifico}
+                {minha.comodo ? ` · ${minha.comodo}` : ''}
+              </Texto>
+            </View>
+          </>
+        }
+      >
+        {falha && <Aviso tipo="erro">{falha}</Aviso>}
+        <Aviso tipo={s.atraso !== null ? 'alerta' : 'ok'}>{quando}</Aviso>
+        {s.intervaloDias !== null && !s.intervaloComFonte && (
+          <Paragrafo suave>
+            O intervalo de {s.intervaloDias} dias é só um lembrete aproximado, ainda sem fonte confirmada. A regra da ficha vale mais.
+          </Paragrafo>
+        )}
+        {s.estacao.rega && (
+          <Cartao>
+            <Texto style={{ fontSize: 13, fontWeight: '600', color: c.textoSuave }}>Como regar agora</Texto>
+            <Texto style={{ fontSize: 16 }}>{s.estacao.rega}</Texto>
+          </Cartao>
+        )}
 
-      {falha && <Aviso tipo="erro">{falha}</Aviso>}
-      <Aviso tipo={s.atraso !== null ? 'alerta' : 'ok'}>{quando}</Aviso>
-      {s.intervaloDias !== null && !s.intervaloComFonte && (
-        <Paragrafo suave>
-          O intervalo de {s.intervaloDias} dias é só um lembrete aproximado, ainda sem fonte confirmada. A regra da ficha vale mais.
-        </Paragrafo>
-      )}
-      {s.estacao.rega && (
-        <Cartao>
-          <Texto style={{ fontSize: 13, fontWeight: '600', color: c.textoSuave }}>Como regar agora</Texto>
-          <Texto style={{ fontSize: 16 }}>{s.estacao.rega}</Texto>
-        </Cartao>
-      )}
-
-      <View style={{ gap: 8 }}>
-        <Botao titulo="Toquei: ainda úmida" carregando={ocupado === 'conferir'} onPress={() => cuidar('conferir')} />
-        <Botao titulo="Estava seca, reguei" variante="secundario" carregando={ocupado === 'rega'} onPress={() => cuidar('rega')} />
-        <Botao titulo="Adubei" variante="secundario" carregando={ocupado === 'adubo'} onPress={() => cuidar('adubo')} />
-        <Botao titulo="Ver ficha completa" variante="secundario" onPress={() => router.push({ pathname: '/casa/[id]', params: { id: planta.id } })} />
-      </View>
-
-      <Subtitulo>Histórico</Subtitulo>
-      {historico.length === 0 ? (
-        <Paragrafo suave>Nada registrado ainda. Na lista desde {formatarData(minha.desde)}.</Paragrafo>
-      ) : (
-        historico.map((r, i) => (
-          <Texto key={`${r.data}-${r.tipo}-${i}`} style={{ fontSize: 15 }}>
-            {formatarData(r.data)} · {NOME_CUIDADO_CASA[r.tipo]}
-          </Texto>
-        ))
-      )}
-
-      {confirmarRemocao ? (
         <View style={{ gap: 8 }}>
-          <Paragrafo>Tirar {nome} da sua lista? O histórico fica guardado.</Paragrafo>
-          <Botao
-            titulo="Sim, tirar da lista"
-            variante="perigo"
-            carregando={ocupado === 'remover'}
-            onPress={() => agir('remover', () => removerPlantaCasa(minha.id)).then((ok) => ok && router.replace('/horta'))}
-          />
-          <Botao titulo="Cancelar" variante="secundario" onPress={() => setConfirmarRemocao(false)} />
+          <Botao titulo="Toquei: ainda úmida" carregando={ocupado === 'conferir'} onPress={() => cuidar('conferir')} />
+          <Botao titulo="Estava seca, reguei" variante="secundario" carregando={ocupado === 'rega'} onPress={() => cuidar('rega')} />
+          <Botao titulo="Adubei" variante="secundario" carregando={ocupado === 'adubo'} onPress={() => cuidar('adubo')} />
+          <Botao titulo="Ver ficha completa" variante="secundario" onPress={() => router.push({ pathname: '/casa/[id]', params: { id: planta.id } })} />
         </View>
-      ) : (
-        <Botao titulo="Tirar da lista" variante="perigo" onPress={() => setConfirmarRemocao(true)} />
-      )}
+
+        <Subtitulo>Histórico</Subtitulo>
+        {historico.length === 0 ? (
+          <Paragrafo suave>Nada registrado ainda. Na lista desde {formatarData(minha.desde)}.</Paragrafo>
+        ) : (
+          historico.map((r, i) => (
+            <Texto key={`${r.data}-${r.tipo}-${i}`} style={{ fontSize: 15 }}>
+              {formatarData(r.data)} · {NOME_CUIDADO_CASA[r.tipo]}
+            </Texto>
+          ))
+        )}
+
+        {confirmarRemocao ? (
+          <View style={{ gap: 8 }}>
+            <Paragrafo>Tirar {nome} da sua lista? O histórico fica guardado.</Paragrafo>
+            <Botao
+              titulo="Sim, tirar da lista"
+              variante="perigo"
+              carregando={ocupado === 'remover'}
+              onPress={() => agir('remover', () => removerPlantaCasa(minha.id)).then((ok) => ok && router.replace('/horta'))}
+            />
+            <Botao titulo="Cancelar" variante="secundario" onPress={() => setConfirmarRemocao(false)} />
+          </View>
+        ) : (
+          <Botao titulo="Tirar da lista" variante="perigo" onPress={() => setConfirmarRemocao(true)} />
+        )}
+      </Colunas>
     </Tela>
   );
 }

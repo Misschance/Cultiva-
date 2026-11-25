@@ -3,7 +3,7 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { PlantaViva } from '../components/planta-viva';
-import { Aviso, Carregando, Paragrafo, Tela, Texto, Titulo, fontes, useCores } from '../components/ui';
+import { Grade, Aviso, Carregando, Paragrafo, Tela, Texto, Titulo, fontes, useCores } from '../components/ui';
 import { carregarColhido } from '../lib/dados';
 import { ESPECIES, useHorta } from '../lib/horta';
 
@@ -37,7 +37,7 @@ export default function Colhido() {
   const total = descreverTotais(r.totais);
 
   return (
-    <Tela>
+    <Tela largura="larga">
       <Titulo>Minhas colheitas</Titulo>
 
       <View style={{ borderRadius: 28, backgroundColor: c.doca, padding: 20, gap: 18 }}>
@@ -76,7 +76,7 @@ export default function Colhido() {
       {r.vezes === 0 ? (
         <Paragrafo suave>Quando colher, registre a quantidade no diário da planta. Ela aparece aqui somada.</Paragrafo>
       ) : (
-        <View style={{ gap: 10 }}>
+        <Grade minimo={300} gap={10}>
           {r.porEspecie.map((e) => {
             const especie = ESPECIES.get(e.especieId);
             return (
@@ -97,7 +97,7 @@ export default function Colhido() {
               </View>
             );
           })}
-        </View>
+        </Grade>
       )}
     </Tela>
   );

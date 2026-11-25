@@ -63,7 +63,7 @@ export default function NovoLocal() {
   }
 
   return (
-    <Tela>
+    <Tela largura="estreita">
       <Campo rotulo="Nome do local" value={nome} onChangeText={setNome} placeholder="Ex.: Varanda, Canteiro 1" maxLength={60} />
       <Opcoes rotulo="Tipo" valor={tipo} onChange={setTipo} opcoes={opcoesDe(NOME_TIPO_LOCAL)} />
       <Opcoes
